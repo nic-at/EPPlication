@@ -1,0 +1,77 @@
+.node .node { /* doesn't apply to root node */
+    margin-top: 3px;
+}
+
+.node-panel {
+    border: 1px solid #bbb;
+}
+
+.node-heading {
+    padding: 3px;
+    background-color: #f5f5f5;
+}
+
+.node-body {
+    padding: 3px;
+    border-top: 1px solid #bbb;
+}
+.node-body > pre {
+    background-color: inherit;
+    border: 0;
+    border-radius: 0;
+    margin: 1px;
+    padding: 1px;
+}
+
+.node-content {
+    position: relative;
+    padding-left: 20px;
+}
+
+.node-panel .glyphicon {
+    cursor: pointer;
+    font-size: 80%;
+    color: #444;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.node-closer {
+    cursor: pointer;
+    position: absolute;
+    width: 20px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+.node-closer > div {
+    border-left: 1px solid #ddd;
+    position:absolute;
+    top: -3px;
+    bottom: 0;
+    left: 9px;
+}
+.node-closer:hover > div {
+    border-color: #999;
+}
+
+.node-danger > .node-panel,
+.node-danger > .node-panel .node-body {
+    border-color: #ebccd1;
+}
+.node-danger > .node-panel .node-heading {
+    background-color: #f2dede;
+    color: #a94442;
+}
+.node-success > .node-panel,
+.node-success > .node-panel .node-body {
+    border-color: #d6e9c6;
+}
+.node-success > .node-panel .node-heading {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.node-highlight > .node-panel {
+    border: 1px solid black;
+}

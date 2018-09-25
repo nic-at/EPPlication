@@ -1,0 +1,9 @@
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+main.log
+ssh_keys
+root/job_exports
+epplication_web_*
+local

@@ -1,0 +1,489 @@
+[% USE HTML %]
+[% tt_start_tag = '[' _ '%' %]
+[% tt_end_tag = '%' _ ']' %]
+<div class="page-header">
+  <h2>Help</h2>
+</div>
+
+<h3>About</h3>
+  <p>EPPlication (v[% c.VERSION %])</p>
+  <p>Database Schema (v[% c.model('DB').schema.VERSION %])</p>
+
+<h3>Step Types</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+      <th class="span7">Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>*</td>
+      <td>
+        Attributes common to all step types<br/>
+        <ul>
+          <li><strong>name</strong>: a human readable name for the step.</li>
+          <li><strong>highlight</strong>: highlights the step for better visibility.</li>
+          <li><strong>active</strong>: controls if a step is executed or not.</li>
+          <li><strong>condition</strong>: conditionally controls if a step is executed or not.</li>
+        </ul>
+      </td>
+      <td>
+        Name: <code>set variable foobar</code><br/>
+        Highlight: <code>0|1</code><br/>
+        Active: <code>0|1</code><br/>
+        Condition: <code>0|1|[% tt_start_tag %] set_foobar == 1 [% tt_end_tag %]</code>
+      </td>
+    </tr>
+    <tr>
+      <td>VarVal</td>
+        <td>Set a variable to a value.<br />If the global checkbox is checked the value will persist a dicClearVars step.</td>
+      <td>
+        Variable: <code>usr</code> / Value: <code>reg001</code> / Global: <code>0|1</code><br/>
+        Variable: <code>nic_usr</code> / Value: <code>nic-[% tt_start_tag %] usr [% tt_end_tag %]</code> / Result: <code>nic-reg001</code> / Global: <code>0|1</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Multiline</td>
+      <td>Like VarVal but the input can be a multiline text.</td>
+      <td>
+        Variable: <code>mail_body</code><br/>
+        Text: <pre>Hello Customer<br/>...<br/>Bye</pre>
+        Global: <code>0|1</code>
+      </td>
+    </tr>
+    <tr>
+      <td>VarRand<br/><a title="open String::Random documentation" href="https://metacpan.org/pod/String::Random#Patterns"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+      <td>
+        Set a variable to a random value according to a regular expression.<br/>
+        <ul>
+          <li>\w ... Alphanumeric + "_"</li>
+          <li>\d ... Digits</li>
+          <li>\W ... Printable characters other than those in \w</li>
+          <li>\D ... Printable characters other than those in \d</li>
+          <li>.  ... Printable characters</li>
+          <li>[] ... Character classes</li>
+          <li>{} ... Repetition</li>
+          <li>* ... Same as {0,}</li>
+          <li>? ... Same as {0,1}</li>
+          <li>+ ...  Same as {1,}</li>
+        </ul>
+      </td>
+      <td>
+        Variable: <code>random_string</code><br/>Rand: <code>\d{3}[A-Z]{3}[a-z]{3}</code><br/>Result: <code>381LTBksv</code><br/><br/>
+        Variable: <code>random_string</code><br/>Rand: <code>foobar [.,*+#]{3}</code><br/>Result: <code>foobar *,#</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Transformation</td>
+      <td>
+        Transform value of a variable and save result in another variable.<br/>
+      </td>
+      <td>transformation: <code>Uppercase | HeaderRow | HeaderRowCSV | Xml2Json | Undef2EmptyStr | ParseWhoisAT | ParseWhoisBox | Trim | LineNumber</code><br/>input: <code>[% tt_start_tag %] foo_lc [% tt_end_tag %]</code><br/>var_result: <code>foo_uc</code></td>
+    </tr>
+    <tr>
+      <td>Math</td>
+      <td>Provides the following math operations:
+        <ul>
+          <li>Addition</li>
+          <li>Subtraction</li>
+          <li>Multiplication</li>
+          <li>Division</li>
+          <li>Logical AND</li>
+          <li>Logical OR</li>
+        </ul>
+      </td>
+      <td>
+        Variable: <code>sum</code><br/>Operator: <code>+</code><br/>ValueA: <code>14</code><br/>ValueB: <code>7</code>
+      </td>
+    </tr>
+    <tr>
+      <td>ClearVars</td>
+      <td>Empty the stash. All non-global variables will be cleared.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>PrintVars</td>
+      <td>Print the stash content.<br/>Optionally provide a <strong>Filter</strong> value to only show variables you are interested in.</td>
+      <td>Filter: <code>foobar</code></td>
+    </tr>
+    <tr>
+      <td>DBConnect</td>
+      <td>Connect to a database.</td>
+      <td>
+        host: <code>database.nic-test.at</code><br/>
+        port: <code>5432</code><br/>
+        database: <code>registry</code><br/>
+        username: <code>registry</code><br/>
+        password: <code>asdf</code><br/>
+        var_result: <code>db_response</code><br/>
+      </td>
+    </tr>
+    <tr>
+      <td>DBDisconnect</td>
+      <td>Disconnect from the DB Server.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>DB</td>
+      <td>
+        Execute SQL statement on a database.<br/>
+        If the statement returns any rows, var_result will be populated with
+        an arrayref of hashrefs where each hashref represents a row.<br/>
+        The hashref has key/value pairs of the table column name/value.
+        For INSERT, UPDATE and SELECT statements var_result is populated with
+        the number of affected rows.
+      </td>
+      <td>
+        var_result:<code>db_response</code><br/>
+        Sql: <code>SELECT id, name FROM foo</code>
+      </td>
+    </tr>
+    <tr>
+      <td>EPPConnect</td>
+      <td>Connect to a EPP Server. The EPP greeting is available in the provided <code>var_result</code>.
+      </td>
+      <td>
+        host: <code>epptest.nic-test.at</code><br/>
+        port: <code>700</code><br/>
+        ssl: <code>0|1</code><br/>
+        var_result: <code>epp_response</code><br/>
+        ssl_use_cert: <code>0|1</code><br/>
+        ssl_cert: <code>...</code><br/>
+        ssl_key: <code>...</code><br/>
+      </td>
+    </tr>
+    <tr>
+      <td>EPPDisconnect</td>
+      <td>Disconnect from the EPP Server.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>EPP</td>
+      <td>
+        Send an EPP frame to the EPP Server. Use variables by surrounding the variable name with [% tt_start_tag %] variable_name [% tt_end_tag %].<br/>
+        If <code>validate_xml</code> is checked you can only enter valid XML strings.
+      </td>
+      <td>
+        var_result: <code>epp_response</code><br/>
+        validate_xml: <code>0|1</code><br/>
+        xml:<br/>
+        <pre>
+[%- FILTER html -%]
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<epp xmlns="urn:ietf:params:xml:ns:epp-1.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd">
+<command>
+ <login>
+  <clID>[% tt_start_tag %] username [% tt_end_tag %]</clID>
+  <pw>[% tt_start_tag %] password [% tt_end_tag %]</pw>
+  <options>
+   <version>1.0</version>
+   <lang>en</lang>
+  </options>
+  <svcs>
+  <objURI> urn:ietf:params:xml:ns:domain-1.0 </objURI>
+  <objURI> urn:ietf:params:xml:ns:contact-1.0 </objURI>
+   <svcExtension>
+   <extURI> http://www.nic.at/xsd/at-ext-epp-1.0 </extURI>
+   <extURI> http://www.nic.at/xsd/at-ext-domain-1.0 </extURI>
+   <extURI> http://www.nic.at/xsd/at-ext-contact-1.0 </extURI>
+   </svcExtension>
+  </svcs>
+ </login>
+ <clTRID>[% tt_start_tag %] cltrid [% tt_end_tag %]</clTRID>
+</command>
+</epp>
+[%- END -%]
+      </pre></td>
+    </tr>
+    <tr>
+      <td>SOAP</td>
+      <td>
+        Send a SOAP frame to the SOAP Server.<br/>
+        If validate_xml is checked you can only enter valid XML strings.
+      </td>
+      <td>
+        Host: <code>http://soap.nic-test.at</code><br/>
+        Port: <code>9876</code><br/>
+        Path: <code>/soap</code><br/>
+        Method:<code>GET|POST|PUT|DELETE</code><br/>
+        var_result: <code>soap_response</code><br/>
+        validate_xml: <code>0|1</code><br/>
+        xml:<br/>
+        <pre>
+[%- FILTER html -%]
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope
+    xmlns:namesp1="http://namespaces.soaplite.com/perl"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <command xmlns="urn:Registry::App::SOAP">
+      <c-gensym4 xsi:type="namesp1:hash">
+        <domain xsi:type="xsd:string">orf.at</domain>
+        <command xsi:type="xsd:string">get_domain_data</command>
+      </c-gensym4>
+    </command>
+  </soap:Body>
+</soap:Envelope>
+[%- END -%]
+      </pre></td>
+    </tr>
+    <tr>
+      <td>VarCheck</td>
+      <td>Compare a variable with a value.</td>
+      <td>Variable: <code>msg</code> / Value: <code>Command completed
+successfully</code><br>Variable:
+<code>crid_server</code> / Value: <code>Reg[% tt_start_tag %] username [% tt_end_tag %]</code></td>
+    </tr>
+    <tr>
+      <td>VarCheckRegExp<br/><a title="open Perl regex documentation" href="http://perldoc.perl.org/perlre.html"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+      <td>Check if a value matches a regular expression.</td>
+      <td>
+        RegExp: <code>\d+.*-\d+-nicat</code><br/>
+        Modifiers: <code>xms</code><br/>
+        Value: <code>[% tt_start_tag %] svtrid_server [% tt_end_tag %]</code>
+      </td>
+    </tr>
+      <td>Diff</td>
+      <td>Performs a diff on two values. If the values don't differ an empty string is returned.</td>
+      <td>
+        Variable: <code>diff1</code><br/>
+        Value1: <pre>a<br/>b<br/>c</pre>
+        Value2: <pre>a<br/><br/>c</pre>
+        example output: <pre> a<br/>-b<br/>+ <br/> c</pre>
+      </td>
+    </tr>
+    <tr>
+    <tr>
+      <td>VarQueryPath<br/><a title="open Data::DPath documentation" href="https://metacpan.org/pod/Data::DPath"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+      <td>
+        Apply the QueryPath to the selected source and store the result in the variable.
+        If the selected node is a HASH or ARRAY reference a JSON encoded string is returned.
+      </td>
+      <td>
+        <ul>
+          <li>var_result: <code>result_code</code></li>
+          <li>input: <code>[% tt_start_tag %] epp_response [% tt_end_tag %]</code></li>
+          <li>QueryPath: <code>/epp/response/result/code</code></li>
+      </td>
+    </tr>
+    <tr>
+      <td>CountQueryPath</td>
+      <td>Apply the QueryPath to the selected source and store the number of found nodes in the variable.</td>
+      <td>
+        <ul>
+          <li>var_result: <code>node_count</code></li>
+          <li>input: <code>[% tt_start_tag %] epp_response [% tt_end_tag %]</code></li>
+          <li>QueryPath: <code>//msg</code></li>
+      </td>
+    </tr>
+    <tr>
+      <td>DataCmp</td>
+      <td>Compares two JSON data structures deeply.</td>
+      <td>
+        Value_a: <code>{ "foo": "bar" }</code><br/>
+        Value_b: <code>[% tt_start_tag %] var_foo_bar [% tt_end_tag %]</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SubTest</td>
+      <td>Run another test as part of this test.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>ForLoop</td>
+      <td>Run a subtest with a variable set to a new value for each iteration. The values field expects a JSON encoded array string.</td>
+      <td>
+        <ul>
+          <li>variable: <code>count</code></li>
+          <li>values: <code>[% tt_start_tag %] my_array [% tt_end_tag %]</code></li>
+          <li>subtest: <code>some_subtest</code></li>
+      </td>
+    </tr>
+    <tr>
+      <td>REST</td>
+      <td>
+        Send JSON to the REST Server.<br/>
+        If check_success is activated an unsuccessful response status will be considered an error.<br/>
+        If validate_json is checked you can only enter valid JSON strings.
+      </td>
+      <td>
+        Host: <code>https://rest.nic-test.at</code><br/>
+        Port: <code>443</code><br/>
+        Path:<code>/registrar/myregistrarname</code><br/>
+        Headers:<code>{} | {"Accept":"text/csv;separator=0x2c,header=1,bom=0,quotechar=0x22"}</code>
+        Method:<code>GET|POST|PUT|DELETE</code><br/>
+        var_result:<code>rest_response</code><br/>
+        var_status:<code>rest_status</code><br/>
+        check_success:<code>0|1</code><br/>
+        validate_json:<code>0|1</code><br/>
+        JSON:
+        <pre>
+[%- FILTER html -%]
+{
+"username": "dummy1",
+"email": "foo@bar.at"
+}
+[%- END -%]
+        </pre>
+      </td>
+    </tr>
+    <tr>
+      <td>Whois</td>
+      <td>
+        Send a Whois request.<br/>
+      </td>
+      <td>
+        host: <code>whois.epplication.at</code><br/>
+        port: <code>43</code><br/>
+        var_result: <code>whois_response</code><br/>
+        domain: <code>foobar.at</code><br/>
+      </td>
+    </tr>
+    <tr>
+      <td>DateAdd</td>
+      <td>Adds a duration to a date and stores the result as a new variable.</td>
+      <td>
+        Variable: <code>date_later</code><br/>
+        Date: <code>2013-06-17T06:54:39.102245Z | now()</code><br/>
+        Duration: <code>1 year | 3 months | 7 days | 1 hour | 25 minutes | 10 seconds</code><br/>
+      </td>
+    </tr>
+    <tr>
+      <td>DateFormat<br/><a title="open pattern token documentation" href="https://metacpan.org/pod/DateTime::Format::Strptime#STRPTIME-PATTERN-TOKENS"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+      <td>Format a date according to a pattern and store the result in a variable.</td>
+      <td>
+        Variable: <code>var_dmY</code><br/>
+        Date: <code>2013-06-17T06:54:39.102245Z | now()</code><br/>
+        DateFormatStr: <code>%d.%m.%Y | %Y-%m-%dT%H:%M:%S.%6NZ</code>
+      </td>
+    </tr>
+    <tr>
+      <td>DateCheck</td>
+      <td>Check if a date is within a given Base Date and Range</td>
+      <td>
+        DateGot: <code>2013-06-17T06:54:39.102245Z | now() | [% tt_start_tag %] date_later [% tt_end_tag %]</code><br/>
+        DateExpected: <code>2013-06-17T06:54:39.102245Z | now() | [% tt_start_tag %] some_date [% tt_end_tag %]</code><br/>
+        Duration: <code>2 months</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SSH</td>
+      <td>
+        Execute a command on a remote host<br/>
+        For Public Key Authentication to work you need to save your
+public/private keys as <code>ssh_keys/id_rsa.pub</code> and
+<code>ssh_keys/id_rsa</code> and copy the public key into the proper
+<code>.ssh/authorized_keys</code> file on the remote host.<br/>
+      </td>
+      <td>
+        SSH Host: <code>myhost.at</code><br/>
+        SSH Port: <code>22</code><br/>
+        SSH User: <code>myuser</code><br/>
+        var_stdout: <code>ssh_stdout</code><br/>
+        command: <code>command</code>
+      </td>
+    </tr>
+    <tr>
+      <td>Script</td>
+      <td>
+        Execute a command in a system shell<br/>
+      </td>
+      <td>
+        var_stdout: <code>ssh_stdout</code><br/>
+        command: <code>command</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>QueryPath Examples</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>QueryPath</th>
+      <th>Description</th>
+      <th>Result</th>
+      <th class="span8">Input</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>/response/result/msg</td>
+      <td>Select a &lt;msg&gt; node with an absolute path.</td>
+      <td>Command completed successfully</td>
+      <td><pre>
+[%- FILTER html -%]
+\ {
+  response => {
+    result   => {
+      code     => 1000,
+      msg      => "Command completed successfully"
+    }
+  }
+}
+[%- END -%]
+      </pre></td>
+    </tr>
+
+    <tr>
+      <td>//msg</td>
+      <td>Select a &lt;msg&gt; node anywhere in the input with a relative path.</td>
+      <td>Command completed successfully</td>
+      <td><pre>
+[%- FILTER html -%]
+\ {
+  response => {
+    result   => {
+      code     => 1000,
+      msg      => "Command completed successfully"
+    }
+  }
+}
+[%- END -%]
+      </pre></td>
+    </tr>
+
+    <tr>
+      <td>/*[1]</td>
+      <td>Select second element.</td>
+      <td>bar</td>
+      <td><pre>
+[%- FILTER html -%]
+\ [
+  "foo",
+  "bar",
+  "baz"
+]
+[%- END -%]
+      </pre></td>
+    </tr>
+
+    <tr>
+      <td>/*[value eq "foo"]</td>
+      <td>Select elements with value "foo".</td>
+      <td>foo</td>
+      <td><pre>
+[%- FILTER html -%]
+\ [
+  "foo",
+  "bar",
+  "baz"
+]
+[%- END -%]
+      </pre></td>
+    </tr>
+
+  </tbody>
+</table>

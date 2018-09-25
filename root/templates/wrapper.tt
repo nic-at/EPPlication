@@ -1,0 +1,189 @@
+[% IF no_wrapper %][% content %][% ELSE -%]
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EPPlication</title>
+
+    [% FOR asset IN assets().css %]
+      <link href="[% asset %]" rel="stylesheet">
+    [% END %]
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="[% c.uri_for('/') %]">EPPlication</a>
+        </div>
+        <div class="navbar-collapse collapse">
+        [% IF c.user_exists %]
+          <ul class="nav navbar-nav">
+
+            [% IF c.check_user_roles('can_see_admin_menu') %]
+            <li title="admin menu" class="dropdown[% IF active == 'user' || active == 'branch' || active == 'tag' %] active[% END %]">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span>
+                  Admin
+                </span>
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+
+                [% IF c.check_user_roles('can_list_users') %]
+                <li[% IF active == 'user' %] class="active"[% END %]>
+                  <a href="[% c.uri_for(c.controller('User').action_for('list')) %]">Users</a>
+                </li>
+                [% END %]
+                [% IF c.check_user_roles('can_list_branches') %]
+                <li[% IF active == 'branch' %] class="active"[% END %]>
+                  <a href="[% c.uri_for(c.controller('Branch').action_for('list')) %]">Branches</a>
+                </li>
+                [% END %]
+                [% IF c.check_user_roles('can_list_tags') %]
+                <li[% IF active == 'tag' %] class="active"[% END %]>
+                  <a href="[% c.uri_for(c.controller('Tag').action_for('list')) %]">Tags</a>
+                </li>
+                [% END %]
+
+              </ul>
+            </li>
+            [% END %]
+
+            <li[% IF active == 'test' %] class="active"[% END %]>
+              <a href="[% c.uri_for(c.controller('Test').action_for('list'), [c.session.active_branch.id]) %]">Tests</a>
+            </li>
+            <li[% IF active == 'job' %] class="active"[% END %]>
+              <a href="[% c.uri_for(c.controller('Job').action_for('list')) %]">Jobs</a>
+            </li>
+            <li[% IF active == 'report' %] class="active"[% END %]>
+              <a href="[% c.uri_for(c.controller('Report').action_for('list')) %]">Reports</a>
+            </li>
+
+            <li title="This dropdown menu lists all tests tagged with 'config'." class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                [% IF c.session.active_config %]
+                    <span id="active-config" data-active-config-id="[% c.session.active_config.id %]">[% c.session.active_config.name %]</span>
+                [% ELSE %]
+                    Config
+                [% END %]
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                [% IF c.session.active_config %]
+                <li>
+                  <a href="[% c.uri_for(c.controller('Test').action_for('clear_config')) %]">Clear</a>
+                </li>
+                <li class="divider"></li>
+                [% END %]
+                [% FOR config IN configs %]
+                  [% IF config.id != c.session.active_config.id %]
+                  <li><a href="[% c.uri_for(c.controller('Test').action_for('select_config'), [ c.session.active_branch.id, config.id ]) %]">
+                      [% config.name %]
+                  </a></li>
+                  [% END %]
+                [% END %]
+              </ul>
+            </li>
+
+            <li title="list of branches" class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span id="active-branch" data-active-branch-id="[% c.session.active_branch.id %]">[% c.session.active_branch.name %]</span>
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                [% FOR branch IN branchoptions %]
+                  [% IF branch.id != c.session.active_branch.id %]
+                  <li><a href="[% c.uri_for(c.controller('Branch').action_for('select'), [ branch.id ]) %]">
+                      [% branch.name %]
+                  </a></li>
+                  [% END %]
+                [% END %]
+              </ul>
+            </li>
+
+            <li[% IF active == 'help' %] class="active"[% END %]>
+              <a href="[% c.uri_for(c.controller('Root').action_for('help')) %]">Help</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a><span id="settings-icon" class="glyphicon glyphicon-cog" data-toggle="modal" data-target="#settings-modal"></span></a>
+            </li>
+            <li>
+              <a href="[% c.uri_for(c.controller('Login').action_for('logout')) %]">
+                Logout ([% c.user.name %])
+              </a>
+            </li>
+          </ul>
+          [% ELSE %]
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="[% c.uri_for(c.controller('Login').action_for('login')) %]">Login</a></li>
+          </ul>
+          [% END %]
+        </div>
+      </div>
+    </div>
+
+    <div id="content" class="container">
+      [% IF c.user_exists %]
+        <div class="modal" id="settings-modal" tabindex="-1" role="dialog" aria-labelledby="SettingsModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="SettingsModalLabel">Settings</h4>
+              </div>
+
+              <div class="modal-body form-horizontal">
+
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">stash width</label>
+                  <div class="col-sm-4">
+                    <input class="form-control" readonly data-bind="value: stash_width() + 'px'">
+                  </div>
+                  <i class="btn glyphicon glyphicon-minus" data-bind="click: function(){stash_width(stash_width()-25)}" title="decrease stash width"></i>
+                  <i class="btn glyphicon glyphicon-plus" data-bind="click: function(){stash_width(stash_width()+25)}" title="increase stash width"></i>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-3 control-label">job reload time</label>
+                  <div class="col-sm-4">
+                    <input class="form-control" readonly data-bind="value: job_reload_time() + 's'">
+                  </div>
+                  <i class="btn glyphicon glyphicon-minus" data-bind="click: function(){job_reload_time(job_reload_time()-1)}" title="decrease time"></i>
+                  <i class="btn glyphicon glyphicon-plus" data-bind="click: function(){job_reload_time(job_reload_time()+1)}" title="increase time"></i>
+                </div>
+
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      [% END %]
+      [% IF error_msg %]
+        <div role="alert" class="alert alert-danger">
+          <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">&times;</span></button>
+          <p>[% error_msg | html %]</p>
+        </div>
+      [% END %]
+      [% IF msg %]
+        <div role="alert" class="alert alert-success">
+          <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">&times;</span></button>
+          <p>[% msg | html %]</p>
+        </div>
+      [% END %]
+      [% content %]
+    </div>
+    [% FOR asset IN assets().js %]
+      <script src="[% asset %]"></script>
+    [% END %]
+  </body>
+</html>
+[%- END -%]

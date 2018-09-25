@@ -1,0 +1,5 @@
+<!-- ko with: $root.tag_vm -->
+<div id="tags" style="display:none" class="well well-sm" data-bind="foreach: tags, visible: tags">
+  <span class="btn btn-xs btn-default" data-bind="css: { active: active }, text: name, click: toggle, style: {'background-color': color}"></span>
+</div>
+<!-- /ko -->

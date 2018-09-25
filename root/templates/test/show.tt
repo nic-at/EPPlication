@@ -1,0 +1,115 @@
+<!-- ko with: $root.step_vm -->
+<div class="page-header">
+  <!-- ko if: !show_name_input() -->
+    <h2 data-bind="click: enable_name_input, text: test_name"></h2>
+  <!-- /ko -->
+  <div data-bind="if: show_name_input">
+    <input id="inputName" class="form-control" data-bind="textInput: new_test_name, event: {keypress: updateTestName}"></input>
+  </div>
+  [%  INCLUDE '_actionbar.tt'
+      obj              = test
+      show_create      = 1
+      create_obj_class = 'step'
+      uri_create       = c.uri_for(c.controller('Step').action_for('select'), [ test.branch_id, test.id ])
+      show_job         = 1
+      uri_job          = c.uri_for(c.controller('Job').action_for('create'), [ 'test', test.id ])
+      show_temp_job    = 1
+      uri_temp_job     = c.uri_for(c.controller('Job').action_for('create'), [ 'temp', test.id ])
+  %]
+  <span id="tag-control" class="pull-right">
+    <!-- ko if: !show_tag_select() -->
+    <a class="btn btn-default btn-xs">
+      <i class="glyphicon glyphicon-plus" data-bind="click: function(){select_tag()}"></i>
+    </a>
+    <!-- /ko -->
+    <div class="form-inline" data-bind="if: show_tag_select">
+      <select id="selectTag" class="form-control input-sm" placeholder="new tag" data-bind="options: available_tags, optionsText: 'name', optionsValue: 'id', optionsCaption: 'new tag...', value: selected_tag"></select>
+    </div>
+  </span>
+  <div class="pull-right">
+    <!-- ko foreach: tags -->
+    <span class="btn btn-xs btn-default" data-bind="style: {'background-color': color, 'cursor':'default'}">
+      <span title="tag" data-bind="text: name"></span>
+      <span class="untag_btn" data-bind="click: function(){$parent.remove_tag(id)}">&times;</span>
+    </span>
+    <!-- /ko -->
+    <span title="branch" class="btn btn-xs btn-danger" style="cursor: default">[% test.branch.name %]</span>
+  </div>
+</div>
+
+[% parent_tests = test.parent_tests.default_order.all %]
+[% IF parent_tests %]
+<div class="well well-sm">
+  [% FOR parent_test IN parent_tests %]
+    <a title="click to open parent test." href="[% c.uri_for(c.controller('Test').action_for('show'), [parent_test.branch_id, parent_test.id]) %]"><button class="btn btn-xs btn-default">[% parent_test.name %]</button></a>
+  [% END %]
+</div>
+[% END %]
+
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Nr</th>
+      <th>Active</th>
+      <th>Condition</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Details</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="steps" data-bind="sortable: {
+        data: steps,
+        afterMove: moveStep,
+        options: { handle: '.sortable-handle' }
+    }" data-testid="[% test.id %]" data-testname="[% test.name %]">
+    [%#
+        add .warning css class for step linked in url fragment
+        add .info    css class for steps with highlight checkbox enabled
+    %]
+    <tr data-bind="attr: { id: 'step-'+id }, css: { info: highlight }">
+        <td data-bind="text: $parent.custom_index($data, $index())"></td>
+        <td>
+            <span data-bind="if: active" class="badge alert-success">active</span>
+            <span data-bind="ifnot: active" class="badge alert-danger">inactive</span>
+        </td>
+        <td data-bind="text: condition"></td>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: type"></td>
+        <td>
+            <span data-bind="html: details_html"></span>
+            <span data-bind="text: details_text"></span>
+        </td>
+        <td>
+          <div class="epplication-actionbar btn-group">
+            <a class="btn btn-default btn-xs" data-bind="click: function(){$parent.deleteStep($data, true)}" title="delete step">
+              <i class="glyphicon glyphicon-trash"></i>
+            </a>
+            <a class="btn btn-default btn-xs" data-bind="attr: {href: typeof(edit_url) === 'function' ? edit_url() : ''}" title="edit step">
+              <i class="glyphicon glyphicon-pencil"></i>
+            </a>
+            <a class="btn btn-default btn-xs" title="move step">
+              <i class="sortable-handle glyphicon glyphicon-resize-vertical"></i>
+            </a>
+            <a class="btn btn-default btn-xs" data-bind="click: $parent.mv_to_stash" title="move to stash (press Ctrl to create a copy)">
+              <i class="glyphicon glyphicon-share-alt"></i>
+            </a>
+          </div>
+        </td>
+    </tr>
+  </tbody>
+</table>
+
+<div id="step_stash">
+    <div id="step_stash_head" class="clearfix" data-bind="click: function(){show_stash(!show_stash())}" title="click to toggle step stash">
+        <i data-bind="visible: !show_stash()" class="pull-right glyphicon glyphicon-menu-left"></i>
+        <i data-bind="visible: show_stash"    class="pull-right glyphicon glyphicon-menu-right"></i>
+    </div>
+    <div id="step_stash_body" data-bind="style: { width: $root.stash_width()+'px' }, sortable: { data: step_stash }, visible: show_stash">
+        <div class="step_stash_item" data-bind="attr: { title: name }">
+            <i data-bind="click: function(){$parent.removeFromStash($index())}" class="pull-right glyphicon glyphicon-remove"></i>
+            <span data-bind="text: name"></span>
+        </div>
+    </div>
+</div>
+<!-- /ko -->

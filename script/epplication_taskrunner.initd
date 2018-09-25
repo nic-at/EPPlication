@@ -1,0 +1,39 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use Daemon::Control;
+use FindBin qw/$Bin/;
+use lib "$Bin/../lib";
+use EPPlication::Util::Config;
+
+my $config = EPPlication::Util::Config->get();
+
+my $perl     = $config->{perl};
+my $name     = 'EPPlicationTaskRunner';
+my $root     = $Bin;
+my $program  = "$perl $root/epplication_taskrunner.pl";
+my $pid_file = $config->{TaskRunner}{pid_file};
+my $log_file = $config->{log_file};
+
+Daemon::Control->new(
+    {
+        name      => $name,
+        lsb_start => '$all',
+        lsb_stop  => '$all',
+        lsb_sdesc => $name,
+        lsb_desc  => $name,
+        path      => $root . '/epplication_taskrunner.initd',
+
+        user      => $config->{user},
+        group     => $config->{group},
+        directory => $root,
+        program   => $program,
+
+        pid_file    => $pid_file,
+        stderr_file => $log_file,
+        stdout_file => $log_file,
+
+        fork => 2,    # Default: 2
+    }
+)->run;

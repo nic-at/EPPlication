@@ -1,0 +1,115 @@
+body {
+  padding-top: 70px;
+  position: relative;
+}
+
+.page-header {
+    margin-top: 0;
+}
+.page-header > h2 {
+    margin-top: 0;
+}
+
+#search-query input {
+    width: 600px;
+    margin-bottom: 20px;
+}
+#search-query .btn {
+    vertical-align: top;
+}
+.well .btn {
+    margin: 2px 0 2px 0;
+}
+
+.navbar .dropdown-menu {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.epplication-actionbar .glyphicon {
+    color: #333;
+}
+
+.epplication-actionbar {
+    min-width: 160px; /* don't wrap actionbar */
+}
+
+#login_form input[type="text"], #login_form input[type="password"] {
+    width: 200px;
+}
+
+.ajax-in-progress {
+    color: #9dedf7 !important;
+}
+
+.reset-pointer {
+    cursor: default;
+}
+#users .btn :not(.active), #tags .btn :not(.active) {
+    margin: 1px;
+}
+#users .btn.active, #tags .btn.active {
+    border-width: 2px;
+    border-color: #666;
+    color: #111;
+}
+#tests tr > *:nth-child(1),
+#jobs tr > *:nth-child(8),
+#steps tr > *:nth-child(4),
+#steps tr > *:nth-child(6) {
+    word-break: break-all;
+}
+#steps {
+    min-height: 25px;
+}
+#step_stash {
+    background-color: #d9edf7;
+    border: 1px solid #337ab7;
+    border-radius: 5px;
+    position: fixed;
+    top: 56px;
+    right: 5px;
+}
+#step_stash_head {
+    padding: 3px;
+}
+#step_stash_body {
+    min-height: 100px;
+}
+.step_stash_item {
+    overflow: hidden;
+    border-radius: 3px;
+    background-color: #337ab7;
+    color: #fff;
+    margin: 2px;
+    padding: 2px;
+}
+.drop-dummy {
+    text-align: center;
+    font-weight: bold;
+}
+
+#tag-control {
+    margin-left: 7px;
+}
+.untag_btn {
+    cursor: pointer;
+}
+#inputName {
+    margin-bottom: 10px;
+}
+textarea.json-edit {
+    resize: vertical;
+}
+.jsoneditor {
+    position: absolute;
+    top: 5px;
+    color: #888;
+    cursor: pointer;
+}
+.jsoneditor.jsoneditor-open {
+    right: 20px;
+}
+.jsoneditor.jsoneditor-remove {
+    right: 35px;
+}

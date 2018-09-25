@@ -1,0 +1,23 @@
+version: '3'
+services:
+    db:
+        image: postgres:9.6-alpine
+        container_name: epplication_db
+        environment:
+            POSTGRES_USER: epplication
+            POSTGRES_PASSWORD: epplication
+            POSTGRES_DB: epplication
+        volumes:
+            - db_data:/var/lib/postgresql/data
+    app:
+        container_name: epplication_app
+        build: .
+        volumes:
+            - app_data_job_exports:/home/epplication/EPPlication/root/job_exports
+            - app_data_ssh_keys:/home/epplication/EPPlication/ssh_keys
+        ports:
+            - "8080:80"
+volumes:
+    db_data:
+    app_data_job_exports:
+    app_data_ssh_keys:

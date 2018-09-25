@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h2>Users</h2>
+  [%  INCLUDE '_actionbar.tt'
+      show_create = 1
+      uri_create  = c.uri_for(c.controller('User').action_for('create'))
+  %]
+</div>
+
+[% users = users.default_order.all %]
+[% IF users %]
+
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+[% FOR user IN users %]
+    <tr>
+      <td>[% user.name %]</td>
+      <td>
+        [%  INCLUDE '_actionbar.tt'
+            obj         = user
+
+            show_edit   = 1
+            uri_edit    = c.uri_for(c.controller.action_for('edit'), [ user.id ])
+
+            show_delete = 1
+            uri_delete  = c.uri_for(c.controller.action_for('delete'), [ user.id ])
+        %]
+      </td>
+    </tr>
+[% END %]
+  </tbody>
+</table>
+
+[% ELSE %]
+<div class="well">No users available.</div>
+[% END %]

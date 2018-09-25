@@ -1,0 +1,67 @@
+<!-- ko with: $root.user_vm -->
+<div id="users" style="display:none" class="well well-sm" data-bind="foreach: users, visible: users">
+  <span class="btn btn-xs btn-default" data-bind="css: { active: active }, text: name, click: toggle"></span>
+</div>
+<!-- /ko -->
+
+<!-- ko with: $root.job_vm -->
+<div class="page-header">
+  <h2>Jobs</h2>
+</div>
+
+<table class="table table-condensed table-hover" style="display:none" data-bind="visible: jobs().length">
+  <thead>
+    <tr>
+      <th data-bind="click: order">Created</th>
+      <th data-bind="click: order">Duration</th>
+      <th data-bind="click: order">Steps</th>
+      <th data-bind="click: order">Errors</th>
+      <th data-bind="click: order">User</th>
+      <th data-bind="click: order">Branch</th>
+      <th data-bind="click: order">Config</th>
+      <th data-bind="click: order">Test</th>
+      <th>Comment</th>
+      <th data-bind="click: order">Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="jobs" data-bind="foreach: jobs">
+    <tr>
+      <td data-bind="text: created"></td>
+      <td data-bind="text: duration"></td>
+      <td data-bind="text: num_steps"></td>
+      <td data-bind="text: errors"></td>
+      <td data-bind="text: user"></td>
+      <td data-bind="text: branch"></td>
+      <td>
+        <a data-bind="text: config, attr: {href: config_url}"></a>
+      </td>
+      <td>
+        <a data-bind="text: test, attr: {href: test_url}"></a>
+      </td>
+      <td>
+        <span data-bind="html: comment"></span>
+        <span class="badge alert-warning" data-bind="if: sticky">sticky</span>
+      </td>
+      <td>
+        <span data-bind="attr: {class: status_class}, text: status"></span>
+      </td>
+      <td>
+        <div class="epplication-actionbar btn-group">
+            <a class="btn btn-default btn-xs" title="Show" data-bind="attr: {href: show_url}">
+              <i class="glyphicon glyphicon-eye-open"></i>
+            </a>
+            <a class="btn btn-default btn-xs" title="Edit" data-bind="attr: {href: edit_url}">
+              <i class="glyphicon glyphicon-pencil"></i>
+            </a>
+            <a class="btn btn-default btn-xs" data-bind="click: function(){$parent.deleteJob($data)}" title="Delete">
+              <i class="glyphicon glyphicon-trash"></i>
+            </a>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="well" data-bind="visible: !jobs().length">No jobs available.</div>
+<!-- /ko -->

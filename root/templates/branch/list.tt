@@ -1,0 +1,37 @@
+<div class="page-header">
+  <h2>Branches</h2>
+</div>
+
+[% branches = branches.default_order.all %]
+[% IF branches %]
+
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+[% FOR branch IN branches %]
+    <tr>
+      <td>[% branch.name %]</td>
+      <td>
+        [%  INCLUDE '_actionbar.tt'
+            obj         = branch
+
+            show_edit   = 1
+            uri_edit    = c.uri_for(c.controller.action_for('edit'), [ branch.id ])
+
+            show_delete = 1
+            uri_delete  = c.uri_for(c.controller.action_for('delete'), [ branch.id ])
+        %]
+      </td>
+    </tr>
+[% END %]
+  </tbody>
+</table>
+
+[% ELSE %]
+<div class="well">No branches available.</div>
+[% END %]

@@ -1,0 +1,8 @@
+[% IF render_tag_select %]
+[% INCLUDE 'tag/_select.tt' %]
+<!-- ko with: $root.step_edit_vm -->
+[% END %]
+[% form.render %]
+[% IF render_tag_select %]
+<!-- /ko -->
+[% END %]

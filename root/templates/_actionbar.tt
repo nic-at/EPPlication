@@ -1,0 +1,105 @@
+[%  DEFAULT
+    show_create        = 0
+    show_clone         = 0
+    show_show          = 0
+    show_delete        = 0
+    show_edit          = 0
+    show_job           = 0
+    show_export_job    = 0
+    show_temp_job      = 0
+    show_move_to       = 0
+%]
+
+[% obj_class = obj_class or obj.table or c.controller.resource_key or 'item' %]
+[% obj_name  = obj_name or obj.name or obj_class _ ' (id:' _ obj.id _ ')' %]
+[% obj_name  = obj_name.replace('"', '&quot;') %]
+[% create_obj_class = create_obj_class or obj_class %]
+
+[% IF show_move_to %]
+<form style="display:none" id="form_[% obj.id %]_move_to" action="[% uri_move_to %]" method="post">
+  <input type="text" name="pos">
+</form>
+[% END %]
+
+[% IF show_temp_job %]
+<form style="display:none" id="form_[% obj.id %]_temp_job" action="[% uri_temp_job %]" method="post">
+</form>
+[% END %]
+
+[% IF show_job %]
+<form style="display:none" id="form_[% obj.id %]_job" action="[% uri_job %]" method="post">
+</form>
+[% END %]
+
+[% IF show_export_job %]
+<form style="display:none" id="form_[% obj.id %]_export_job" action="[% uri_export_job %]" method="post">
+</form>
+[% END %]
+
+[% IF show_delete %]
+<form style="display:none" id="form_[% obj.id %]_delete" action="[% uri_delete %]" method="post">
+</form>
+[% END %]
+
+[% IF show_clone %]
+<form style="display:none" id="form_[% obj.id %]_clone" action="[% uri_clone %]" method="post">
+</form>
+[% END %]
+
+<div class="epplication-actionbar btn-group">
+
+    [% IF show_create %]
+    <a class="btn btn-default btn-xs" href="[% uri_create %]" title="Create new [% create_obj_class %]">
+      <i class="glyphicon glyphicon-plus"></i>
+    </a>
+    [% END %]
+
+    [% IF show_move_to %]
+    <a class="btn btn-default btn-xs" title="Click here to drag [% obj_name %] to another position.">
+      <i class="sortable-handle glyphicon glyphicon-move"></i>
+    </a>
+    [% END %]
+
+    [% IF show_show %]
+    <a class="btn btn-default btn-xs" title="Show [% obj_name %]" href="[% uri_show %]">
+      <i class="glyphicon glyphicon-eye-open"></i>
+    </a>
+    [% END %]
+
+    [% IF show_edit %]
+    <a class="btn btn-default btn-xs" title="Edit [% obj_name %]" href="[% uri_edit %]">
+      <i class="glyphicon glyphicon-pencil"></i>
+    </a>
+    [% END %]
+
+    [% IF show_temp_job %]
+    <a class="btn btn-default btn-xs" onclick="$('#form_[% obj.id %]_temp_job').submit();" title="Schedule [% obj_name %] as temp job.">
+      <i class="glyphicon glyphicon-play"></i>
+    </a>
+    [% END %]
+
+    [% IF show_job %]
+    <a class="btn btn-default btn-xs" onclick="$('#form_[% obj.id %]_job').submit();" title="Schedule [% obj_name %] as job.">
+      <i class="glyphicon glyphicon-time"></i>
+    </a>
+    [% END %]
+
+    [% IF show_export_job %]
+    <a class="btn btn-default btn-xs" onclick="$('#form_[% obj.id %]_export_job').submit();" title="Export job.">
+      <i class="glyphicon glyphicon-download-alt"></i>
+    </a>
+    [% END %]
+
+    [% IF show_delete %]
+    <a class="btn btn-default btn-xs" onclick="confirm('Do you really want to delete &ldquo;[% obj_name.squote %]&rdquo;?') && $('#form_[% obj.id %]_delete').submit();" title="Delete [% obj_name %]">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+    [% END %]
+
+    [% IF show_clone %]
+    <a class="btn btn-default btn-xs" onclick="$('#form_[% obj.id %]_clone').submit();" title="Copy [% obj_name %]">
+      clone
+    </a>
+    [% END %]
+
+</div>

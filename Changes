@@ -1,0 +1,620 @@
+1.0.1  25.09.2018
+    - fix testsuite
+
+1.0.0  25.09.2018
+    - easy startup with Docker
+    - first open source release
+    - new License (Free Artistic 2.0)
+
+0.9.8  04/06/2018
+    - group admin navlinks into dropdown
+    - rm CLI/API feature to auto-create configs
+    - new feature: branches, create a copy of all tests via commandline script
+    - colored tags
+
+0.9.7  22/05/2018
+    - word-break long test/job/var names
+    - order job list by column headers
+    - run maintenance tasks sparsely
+    - automatically delete old job_export files
+    - filter PrintVars output
+    - re-open logfile after HUP signal sent by logrotate
+
+0.9.6  13/11/2017
+    - print response obj if SOAP req fails
+    - accept broad content-type definitions
+    - dont decode content if content eq ""
+    - add HEAD,OPTIONS to list of valid HTTP verbs
+    - set window title for /users
+    - new transformation LineNumber
+
+0.9.5  06/09/2017
+    - bugfixes
+    - set descriptive window titles
+    - make job quicklinks clickable
+    - dont load jobs until user clicks button of jobcreator
+    - new Transformation: trim whitespaces
+    - user configurable job reload time
+
+0.9.4  10/05/2017
+    - updated WHOISBOX transformation
+    - new step HTTP
+    - show job results while job is still in progress
+    - removed path_prefix from REST steps
+    - AJAX updates on test/show. edit tags, edit test name.
+    - fixed bug when drag&drop ordering steps
+
+0.9.3  13/07/2016
+    - more bugfixes
+        - set status class for exported jobs with an error.
+        - set status class for exported jobs.
+        - forgot to include jquery-ui.js
+
+0.9.2.1  28/06/2016
+    - hotfix: dont count step_results, instead use precalculated column value $job->num_steps
+
+0.9.2  28/06/2016
+    - concatenate and minify js/css files for delivery
+    - Huge refactoring:
+        - tags and test search is now handled with javascript
+        - list of tests now load via ajax
+        - when editing a subtest step the options for the select are now loaded via ajax
+        - list of jobs now load via ajax
+        - filtering jobs via user now via ajax
+    - highlight and scroll to the step if you click the eye-icon in a job results
+
+0.9.1  18/05/2016
+    - fixes:
+        - deprecation in DateTime::Format::StrpTime and added Date tests
+        - missing stringification of Path::Class objs for perl-5.14.2
+        - close(flush) fh before bzip2ing the job report file
+    - job reports
+        - set mime type header for download file
+        - improved handling of fs path in the request parameters
+
+0.9.0  11/05/2016
+    - job reports
+        - integrated report listing into EPPlication layout
+        - report files only accessible if user is authenticated
+        - new method "EPPlication::CLI::download_job_report"
+    - merge API and HTML Catalyst Apps
+        There used to be 2 separate Catalyst apps that were combined
+        using Plack::Builder. But since we started making AJAX calls from
+        the HTML frontend we needed REST controllers in both apps and
+        the separation didnt make sense anymore.
+        ATTENTION: config files have been renamed, see README for details.
+
+0.8.42  14/04/2016
+    - added a 'highlight' attribute for steps for improved visibility
+    - minor UI changes
+    - added settings dialog
+      - set stash width
+
+0.8.41  12/01/2016
+    - minor UX improvements
+    - fix breaking changes in new CPAN modules
+    - add TT Plugin for Unicode character insertions
+
+0.8.40  4/01/2016
+    - drag&drop steps into persistent clipboard
+    - rename window title for test/show view
+    - new Step "Script" for running commands in shell
+
+0.8.39  13/10/2015
+    - EPPConnect can use SSL key/cert authentication
+
+0.8.38  28/09/2015
+    - Bugfix: SSH utf8 problem
+    - Bugfix: ParseWhoisAT omitted personname+domain
+
+0.8.37  28/07/2015
+    - added whois parse transformation
+    - make transformations pluggable
+    - add modifiers param to VarCheckRegExp
+
+0.8.36  15/07/2015
+    - new Step Whois
+    - show STDOUT if SSH step returns an error
+
+0.8.35.1  8/06/2015
+    - hotfix: added missing dependency Regexp::Grammars
+
+0.8.35  8/06/2015
+    - refactored search string parsing. multi-word queries now possible.
+
+0.8.34  15/04/2015
+    - new step Multiline, input text with more then one line.
+    - new step Diff, show difference between two strings.
+    - if VarQueryPath selects a reference to an ARRAY or HASH
+      a JSON encoded string is returned.
+
+0.8.33  16/03/2015
+    - bugfixes:
+        - fix node_show_all, recursion didnt work when child nodes
+          in the next level are already open.
+        - data in the node-body wasn't html escaped.
+        - job-results were not written to DB in batches anymore
+          instead each result-step caused a DB write operation.
+
+0.8.32  12/03/2015
+    - refactor JS for displaying job result into
+      independent component treejo.js.
+    - fix: deleting job while in_progress didn't abort job execution.
+
+0.8.31  5/03/2015
+    - new JSONEditor for creating JSON strings
+    - remove step Array, use VarVal with JSONEditor instead
+
+0.8.30  24/02/2015
+    - simplified search code for tests (tag filtering)
+    - added virtual tags
+        all ........ all tests pass the tagfilter
+        untagged ... all untagged tests pass the tagfilter
+    - improved documentation (help page)
+
+0.8.29  18/02/2015
+    - UX improvements and bugfixes
+    - jQuery and Bootstrap update
+
+0.8.28  9/02/2015
+    - added root namespace for javascript code
+    - added open/close node buttons
+        - open all child nodes
+        - close arbitrary parent node
+
+0.8.27  4/02/2015
+    - documentation changes
+      - updated installation process
+      - added LICENSE file
+    - cpanfile replaces Makefile.PL for dependency tracking
+
+0.8.26  14/01/2015
+    - fix TaskRunner, cleanup zombie processes
+    - new Transformation 'undef2emptystr' replaces each undefined
+      hash-value with an empty string
+
+0.8.25  24/11/2014
+    - /test/list returns empty list if no search params provided
+    - memory leak fix
+        ZeroMQ has been removed, no more prespawned worker processes
+        each job-run and job-export task runs in a forked child process
+    - VarCheckRegExp takes a vaule instead of a variable now
+
+0.8.24  20/10/2014
+    - new step 'DataCmp' for comparing data structures deeply
+    - REST steps handles CSV response content type
+        - REST requests headers can be changed
+    - new transformation 'header_row_csv'
+    - let user change job type
+
+0.8.23  16/09/2014
+    - new step Array
+    - new step ForLoop
+        asks for a subtest, variable and array, at runtime it
+        sets the variable to each value and runs the subtest.
+
+0.8.22  8/09/2014
+    - CSS/JS lib upgrade
+        - Twitter Bootstrap (v2.3.1 to v3.2.0)
+        - jquery (v2.0.3 to v2.1.1)
+        - jquery-ui (v1.10.2 to v1.11.1)
+    - when creating a step the types are now grouped logically.
+    - if processing an API call throws an exception the default
+      error response is no longer a HTML page but a JSON 500 response.
+
+0.8.21  20/08/2014
+    - config helper changes
+      - output result to STDOUT
+      - don't create config unless params are provided
+      - defaults removed
+    - EPPlication::CLI can request versions
+        - EPPlication version
+        - Database Schema version
+    - validate_json checkbox for REST steps
+
+0.8.20  18/08/2014
+    - number of MQ worker processes now configurable/overridable
+    - validate_xml checkbox for EPP+SOAP steps
+    - new database.pl command "delete-tests"
+    - deployment with standalone FCGI server
+    - separated Catalyst App into API-App and HTML-App and re-combined
+      them using Plack::Builder
+      - enabled CSRFBlock for HTML-App
+      - autoindex for job_reports using Plack::App::Directory
+        mounted as /reports
+    - update job.num_steps/job.num_errors progressively during job run
+
+0.8.19  7/08/2014
+    - remove DBIC Enum columns because of memleak bug
+    - add REST login for CLI
+    - removed CSRFBlock, causes problems with REST API
+    - fix same seed for rand problem after a fork
+
+0.8.18  23/07/2014
+    - normalize step names
+          EPPFrame    > EPP
+          SOAPFrame   > SOAP
+          RESTRequest > REST
+          SSH         > SSH
+          DBRequest   > DB
+          FormatDate  > DateFormat
+      NOTE: you have to run 006_normalize_step_names.pl to update existing data.
+    - merge RESTStatus into RESTRequest
+      NOTE: you have to run 005_merge_rest_steps.pl to update existing data.
+
+0.8.17  21/07/2014
+    - new Transformation type: xml2json
+    - consider content-type of REST responses when parsing response
+
+0.8.16  11/07/2014
+    - MessageQueue
+        - a single mq-broker checks the DB for jobs and distributes
+          tasks to mq-worker processes
+        - local config file epplication_local.pl needs an update
+          because the config structure changed.
+    - VarRand now takes a regex to create a random string.
+
+0.8.15  12/06/2014
+    - CLI can change request timeout now.
+    - add step attribute 'condition', steps are only
+      processed if condition is true:
+        - remove CondSubTest step
+    - refactor CondSubTest Step
+      instead of two parameters that are compared
+      use one parameter 'condition' that might use
+      other comparison operators.
+
+0.8.14  2/06/2014
+    - global timeout for all steps
+    - added ssh_port variable
+        - add default [% ssh_port %] parameter
+          for existing SSH steps
+        - add ssh_port to list of required/allowed config keys
+    - find test_id by name via CLI
+
+0.8.13  22/05/2014
+    - dump/restore tests with database.pl script
+    - CLI tests added to testsuite
+    - button to trigger job export and redirect to file
+    - CLI can trigger job export
+
+0.8.12  6/05/2014
+    - refactor row retrieval as colname/value hash
+    - show comment in job/show
+    - show sticky in job/list
+    - log improvements
+        - add PID prefix to msg
+        - improve datetime format
+        - log job type and user
+
+0.8.11  16/04/2014
+    - added basic logging
+
+0.8.10  9/04/2014
+    - case insensitive search
+       test: name, comment
+       job: name, details, type
+    - sticky checkbox for jobs (default => 0)
+      if checked job will not exported/archived
+
+0.8.9  3/04/2014
+    - searchable string for step active status
+    - number active steps in test/show and job/show
+    - refactored steps using "magic" VarVals
+      EPPConnect, RESTRequest, RESTStatus and SOAPFrame were
+      using special variables like 'epp_host', 'epp_port', ...
+      When you create such a step now these values are prefilled
+      with the same values by default but can be changed.
+    - talk SQL using the new steps DBConnect, DBRequest and DBDisconnect
+
+0.8.8  31/03/2014
+    - EPP receive aborts after timeout of 30 seconds now
+    - header_row Transformation
+
+0.8.7  27/03/2014
+    - checkbox to make login persistent
+    - added links for each step in a job report
+        - link to show step in test definition
+        - bookmark link to jump directly to position in job report
+    - fixed EPP receive timeout handling.
+    - refactored search so it produces links that can
+      be passed around via email or the like.
+
+0.8.6  24/03/2014
+    - encode/decode UTF-8 as close to the "outside world" boundaries
+      as possible.
+
+0.8.5  10/03/2014
+    - configure EPPlication daemons via project config file
+    - add column "node_position" to table step_result.
+      a job needs two position columns:
+         a) "node_position" holds the position of a node
+            relative to its parent node.
+         b) "position" holds the absolute position within
+            a job.
+
+0.8.4  2/03/2014
+    - add 'method' param for step SOAPFrame
+    - add CleanupDaemon, removes temp jobs and exports
+      'test' jobs older then 7 days
+    - $job->export writes job to filesystem in txt format
+    - added onetime helper script to export job reports from DB
+    - added onetime helper script to generalize param names/values
+    - fixed security hole, login now required for search
+
+0.8.3  17/02/2014
+    - refactored search for jobs and tests
+    - show job as lazy loading javascript tree.
+      existing job reports are migrated but without
+      restoring the test structure. instead they are
+      divided into dummy-subtests of 100 steps each.
+    - automatically create user with script/database.pl
+
+0.8.2  28/01/2014
+    - command line client returns duration in summary
+    - added helper script to create local catalyst config file
+    - move job daemon config into standard Catalyst config
+      locations.
+      the perl available to root needs the following modules
+        - Daemon::Control
+        - Config:JFDI
+        - Dir::Self
+      aptitude install libdaemon-control-perl \
+                       libconfig-jfdi-perl    \
+                       libdir-self-perl
+    - show active config in main nav bar
+    - remove type 'warning' from step results and also
+      remove column 'warnings' from table 'job'
+
+0.8.1  21/01/2014
+    - refactored job daemon
+      daemon fordwards INT and TERM signals to child procs.
+    - display number of steps/warnings/errors in job list
+    - test run refactored. dont process all at once, instead
+      gather $n (currently 5000)  results, store to DB, repeat.
+      this approach keeps the memory footprint small enough
+      even for arbritary sized tests and scales much better.
+    - instant run of tests is not done in Catalyst process anymore.
+      instead the job daemon takes care of that.
+      jobs can be of type 'test' and 'temp'
+    - normalize DB schema, new table step_results
+      no longer store JSON serialized results in job.data
+      WARNING: migration on production system will take hours.
+    - user_id and test_id in job table can be NULL now
+
+0.8.0  17/12/2013
+    - fill in form with default variable names
+      where possible.
+    - EPPlication v0.7.34 is broken, step RESTStatus
+      was not upgraded/migrated correctly.
+
+0.7.34  16/12/2013
+    - new Step Transformation, replaces VarUppercase and
+      serves as basis for future operations on stash variables.
+    - EPPConnect, EPPFrame, SOAPFrame, RESTRequest, RESTStatus got an
+      additional parameter 'var_result' where the response is
+      saved as serialized JSON string.
+      Consequentially VarQueryPath and CountQueryPath require a new
+      parameter aswell 'input' which is expected to be a serialized
+      JSON string.
+    - added ssh_host + ssh_user to list of possible
+      CLI parameters.
+    - use Import::Into to create EPPlication::TestKit
+      which includes the boilerplate code for
+      EPPlication tests.
+
+0.7.33  25/11/2013
+    - added && and || operators to Math step
+    - tests added via Command Line Interface are
+      tagged with 'cli' automatically.
+    - EPPlication::CLI now returns a hashref with
+      job details instead of the job status string.
+    - separated testing and production database.
+      controllable via environment variables.
+      EPPLICATION_CONFIG_LOCAL_SUFFIX=testing
+      when running prove on an empty testing database
+      set EPPLICATION_DO_INIT_DB=1 for initialization.
+    - new Step "SSH"
+      requires public and private keys to be added to
+      "ssh_keys" directory.
+
+0.7.32  5/11/2013
+    - new Step Math providing basic math operations.
+        - addition
+        - subtraction
+        - multiplication
+        - division
+    - HTTP Command Line Client
+        - get/create config
+        - create job
+        - autocreate config name with md5
+
+0.7.31  14/10/2013
+    - filter jobs by logged in user by default
+    - remember job filter when deleting/editing jobs
+    - remove display of step runtime
+    - Any test that is flagged with the 'config' flag can be set as config for
+      a test run. This means the config test is run before the actual test is
+      run. The active config is seleced via a drop down list in the navigation
+      bar.
+    - global checkbox for VarVal steps
+
+0.7.30  3/10/2013
+    - make /test/run_job + /test/run_now POST methods
+    - fix default valu eof step active attribute
+
+0.7.29  24/09/2013
+    - make steps active/inactive
+    - record and display job runtime
+    - filter job list by user
+
+0.7.28  17/09/2013
+    - users can comment on jobs
+    - make response from step RESTStatus queryable
+    - Jobs show user that started job
+    - new step VarUpperCase
+
+0.7.27  03/09/2013
+    - highlight input field when trailing whitespace present
+    - refactored steps VarQueryPath[EPP|SOAP|REST] into VarQueryPath
+    - refactored steps CountPath[EPP|SOAP|REST] into CountQueryPath
+
+0.7.26  26/08/2013
+    - run tests instantly without logging of results or as job
+    - job queue processing with daemon instead of cronjob now
+    - fixed timestamp timezones
+    - display correct created timestamp for jobs
+    - step PrintVars now returns unserializable blessed ref instead of hashref
+
+0.7.25  20/08/2013
+    - JobQueue cleanup and bugfixes
+        - prefetch test for each job
+        - show seconds for created timestamp of each job
+        - when listing jobs do now retrieve data column from job table
+        - do not copy jobs when cloning a test
+    - clear data for modals after each loop run
+    - all form input fields are now 600px wide
+    - show matching results in CountPath* steps
+    - delete tests only if not used as subtest in another test
+
+0.7.24  6/08/2013
+    - added a job queue. test are executed asyncronously by a separate script
+      and results are serialized and stored in the DB.
+
+0.7.23.1  31/07/2013
+    - hotfix, ajax request for test details queried wrong url
+
+0.7.23  31/07/2013
+    - increased modal and form input width
+    - remove js confirmation when cloning an object
+    - load subtest details on demand to decrease page load time
+    - highlight table rows on hover
+    - refactored parameter roles into one parameterizable role
+
+0.7.22  22/07/2013
+    - new step CondSubTest that only executes a SubTest if
+      the two provided values match.
+
+0.7.21  08/07/2013
+    - new steps DateAdd, FormatDate and DateCheck for
+      date and time arithmetics
+    - allow '(', ')', '-', ':' in test names
+
+0.7.20  11/06/2013
+    - protection against CSRF attacks
+    - add validation and filtering against XSS exploits
+    - display process time for each step
+
+0.7.19  21/05/2013
+    - the previous release missed updating some steps to the new
+      START_TAG and END_TAG syntax.
+
+0.7.18  21/05/2013
+    - go back to using default START_TAG and END_TAG in Template Toolkit
+      used to be '%var%' and now it is '[%var%]'
+    - removed VarUnset and replaced with ClearVars. ClearVars wipes the stash
+    - new Step PrintVars that prints all variables currently set
+
+0.7.17  14/05/2013
+    - removed variable override warning
+    - search for tests via fulltext search in a tests comment steps
+    - new steps CountPathEPP, CountPathSOAP, CountPathREST allow counting of
+      the number of nodes a DPath matches.
+
+0.7.16  07/05/2013
+    - remove possibility to clone/copy users, not really useful since users
+      only have a name, password and a couple of roles (permissions).
+    - In order to decouple DBICs copy from EPPlications copy we always use
+      the 'verb' clone from now on. The reason behind this change is that we now
+      have a clean and consistent business side API (clone) that is separate
+      from the DBIC stuff (copy).
+
+0.7.15  30/04/2013
+    - new step type RESTStatus added. Save REST request staus in
+      user provided variable.
+
+0.7.14  23/04/2013
+    - bugfix: execute steps in correct order when running a test
+
+0.7.13  23/04/2013
+    - bugfix: list_variables() was implemented incorrectly
+    - added index for column 'type' in step table
+
+0.7.12  16/04/2013
+    - bugfix: dereference ArrayRef before pushing
+
+0.7.11  16/04/2013
+    - add unique constraint for test names
+    - show list of variables defined in a SubTest step
+    - removed EPP, SOAP and REST connection configuration defaults
+    - dropped test order
+
+0.7.10  12/04/2013
+    - bugfix: use 'epp_ssl' variable when connecting to EPP host
+    - added test to check return status of /test/[edit|show|run] links
+    - various layout improvements
+    - bugfix: fix SOAP- and RESTClient attributes Moose 'isa' value
+
+0.7.9  10/04/2013
+    - bugfix: EPP-, SOAP- and RESTClient had process lifetime
+              and changing a connection parameter in one test run
+              also changed this parameter in another test run.
+
+0.7.8  08/04/2013
+    - sortable steps via drag&drop (javascript)
+    - show comment text in modal on page /test/*/show
+    - update jQuery & Twitter Bootstrap
+
+0.7.7  03/04/2013
+    - added DB migration that renames
+      $step->parameters->{xpath} to $step->parameters->{query_path}
+      (this time for real, 0.7.6 didn't change anything due to a typo)
+
+0.7.6  03/04/2013
+    - added DB migration that renames
+      $step->parameters->{xpath} to $step->parameters->{query_path}
+
+0.7.5  03/04/2013
+    - use Data::DPath to query server responses instead of XPath
+    - added REST with JSON
+    - removed XPath query mechanism to extract information from
+      EPP/SOAP/REST results
+    - added DB migration that does 2 things
+        1) rename step type 'VarXPath*' to 'VarQueryPath*'
+        2) replace $step->parameters->{xml} with $step->parameters->{json}
+           for steps with type 'REST'
+
+0.7.4  21/03/2013
+    - tag selection on page step/create
+
+0.7.3  12/03/2013
+    - display changes
+    - new Step type VarUnset
+
+0.7  11/03/2013
+    - fixed bug that caused exception when deleting used tag
+    - tests do not belong to a user anymore
+    - replace DBIx::Class::Schema::Versioned with
+      DBIx::Class::DeploymentHandler
+    - Test are taggable. Page /test/list shows tags and only tests
+      satisfying all checked tags are listed.
+
+0.6  11/02/2013
+    - normalize DB schema. Store parameters for a step in a JSON encoded
+      data 'parameters' column.
+
+0.5  28/01/2013
+    - EPPlication now talks via REST
+    - shared config with Config::JFDI
+    - DB versioned with DBIx::Class::Schema::Versioned
+    - EPP: Check&warn if client is connected prior to connecting/sending request.
+    - EPP with SSL
+        The default behaviour has been changed to using SSL unless you
+        set the variable epp_ssl to 0
+        The default port has been changed aswell. 707 => 700
+
+0.2-0.4  xx/xx/2012
+    - MISSING
+
+0.1  22/08/2012
+    - initial revision, generated by Catalyst

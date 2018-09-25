@@ -1,0 +1,19 @@
+[% num_columns = 5 %]
+
+[%- FOR type_group = type_groups %]
+
+  [% IF (loop.index % num_columns == 0) %]<div class="row">[% END %]
+
+    <div class="col-md-2">
+      <div class="list-group">
+
+      [%- FOR type_name = type_group %]
+        <a class="list-group-item list-group-item-info" href="[% c.uri_for(c.controller('Step').action_for('create'), [ test.branch_id, test.id ], { 'type' => type_name }) %]">[% type_name %]</a>
+      [%- END %]
+
+      </div>
+    </div>
+
+  [% IF ((loop.index + 1) % num_columns == 0) or loop.last %]</div>[% END %]
+
+[%- END %]

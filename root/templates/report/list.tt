@@ -1,0 +1,24 @@
+<div class="page-header">
+  <h2>Reports</h2>
+</div>
+
+[% IF reports.size %]
+
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Report</th>
+    </tr>
+  </thead>
+  <tbody>
+[% FOR report IN reports %]
+    <tr>
+      <td><a href='[% report.url %]'>[% report.name %]</a></td>
+    </tr>
+[% END %]
+  </tbody>
+</table>
+
+[% ELSE %]
+<div class="well">No reports available.</div>
+[% END %]

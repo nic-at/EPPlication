@@ -1,0 +1,41 @@
+<div class="page-header">
+  <h2>Tags</h2>
+  [%  INCLUDE '_actionbar.tt'
+      show_create = 1
+      uri_create  = c.uri_for(c.controller.action_for('create'))
+  %]
+</div>
+
+[% tags = tags.default_order.all %]
+[% IF tags %]
+
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+[% FOR tag IN tags %]
+    <tr>
+      <td><span class="btn btn-xs btn-default reset-pointer" style="background-color: [%tag.color%]">[% tag.name %]</span></td>
+      <td>
+        [%  INCLUDE '_actionbar.tt'
+            obj         = tag
+
+            show_edit   = 1
+            uri_edit    = c.uri_for(c.controller.action_for('edit'), [ tag.id ])
+
+            show_delete = 1
+            uri_delete  = c.uri_for(c.controller.action_for('delete'), [ tag.id ])
+        %]
+      </td>
+    </tr>
+[% END %]
+  </tbody>
+</table>
+
+[% ELSE %]
+<div class="well">No tags available.</div>
+[% END %]

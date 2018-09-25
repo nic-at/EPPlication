@@ -1,0 +1,78 @@
+<!-- ko with: $root.job_show_vm -->
+
+<!-- ko if: num_steps -->
+[% INCLUDE '_search.tt' %]
+<!-- /ko -->
+
+<div id="job" data-jobid="[% job.id %]" data-testname="[% job.test.name %]" class="page-header">
+  <h2>[% IF job.test_id %][% job.test.name %][% ELSE %][% job.id %][% END %]</h2>
+  [%  INCLUDE '_actionbar.tt'
+      obj             = job.test
+      show_show       = 1
+      uri_show        = c.uri_for(c.controller('Test').action_for('show'), [ job.test.branch_id, job.test_id ])
+      show_job        = 1
+      uri_job         = c.uri_for(c.controller('Job').action_for('create'), [ 'test', job.test_id ])
+      show_export_job = job.status == 'finished'
+      uri_export_job  = c.uri_for(c.controller('Job').action_for('export'), [ job.id ])
+      show_temp_job   = 1
+      uri_temp_job    = c.uri_for(c.controller('Job').action_for('create'), [ 'temp', job.test_id ])
+      show_edit       = 1
+      uri_edit        = c.uri_for(c.controller('Job').action_for('edit'), [ job.id ])
+  %]
+  <div class="pull-right">
+    <span data-bind="css: status_class, text: status" title="status"></span>
+    [% IF job.sticky %]<span class="btn btn-xs btn-default btn-warning reset-pointer">sticky</span>[% END %]
+    [% IF job.user_id %]<span class="btn btn-xs btn-default btn-info reset-pointer" title="user">[% job.user.name %]</span>[% END %]
+    [% IF job.config_id %]<span class="btn btn-xs btn-default btn-info reset-pointer" title="configuration">[% job.config.name %]</span>[% END %]
+    <span class="btn btn-xs btn-default btn-info reset-pointer" title="creation date">[% job.created.set_time_zone('Europe/Vienna').strftime('%d.%m.%Y %H:%M:%S') %]</span>
+    <!-- ko if: duration -->
+    <span class="btn btn-xs btn-default btn-info reset-pointer" data-bind="text: duration" title="duration"></span>
+    <!-- /ko -->
+    <!-- ko if: num_steps -->
+    <span class="btn btn-xs btn-default btn-info reset-pointer" data-bind="text: num_steps" title="number of steps"></span>
+    <!-- /ko -->
+    <!-- ko if: errors -->
+    <a href="[% c.uri_for(c.controller('Job').action_for('show'), [job.id], {search=>'status:error limit:50'}) %]" class="btn btn-xs btn-default btn-danger" data-bind="text: errors" title="number of errors"></a>
+    <!-- /ko -->
+    [% IF job.comment %]
+    [%  INCLUDE '_modal.tt'
+        modal_id     = job.id
+        modal_header = 'Comment'
+        modal_body   = job.comment
+    %]
+    [% END %]
+  </div>
+</div>
+
+<div data-bind="visible: num_steps" class="treejo">
+
+[% IF quicklinks.size %]
+  <div class="well well-sm">
+  [% FOR result IN quicklinks -%]
+    [% IF !result.node %]
+      [% full_node_path = '1' %]
+    [% ELSE %]
+      [% full_node_path = result.node _ '.' _ result.node_position %]
+      [% url = c.uri_for(c.controller('Job').action_for('show'), [ job.id ], { search => 'position:' _ result.position }) %]
+    [% END %]
+    [% SWITCH result.status %]
+      [% CASE 'error' %]
+        [% css_class = 'btn-danger' %]
+      [% CASE 'success' %]
+        [% css_class = 'btn-success' %]
+      [% CASE %]
+        [% css_class = 'btn-default' %]
+    [% END %]
+    <a href="[% url %]" class="quicklink-init btn btn-xs [% css_class %]" data-path="[% full_node_path %]">[% result.name | html %]</a>
+  [% END -%]
+  </div>
+[% END -%]
+
+  <div class="node-init" data-url="[% c.uri_for(c.controller('API::Job').action_for('load_node'), {job_id => job.id, node_id => '1', branch_id => job.test.branch_id}) %]" data-title=""></div>
+</div>
+
+<!-- ko ifnot: num_steps -->
+<div class="well">There is nothing to see.</div>
+<!-- /ko -->
+
+<!-- /ko -->

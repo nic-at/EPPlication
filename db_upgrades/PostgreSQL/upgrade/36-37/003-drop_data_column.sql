@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE job DROP COLUMN data;
+
+COMMIT;
+
