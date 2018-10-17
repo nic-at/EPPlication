@@ -10,6 +10,7 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
  - deep linking to specific result parts
  - HTTP API for automated test execution and monitoring integration
  - wide variety of commands:
+   - control browsers with selenium
    - bash commands
    - make HTTP, SOAP, EPP requests
    - run commands on remote hosts via SSH
@@ -23,29 +24,38 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
 [![EPPlication Video](https://i.vimeocdn.com/video/714314727.jpg?mw=1000&mh=560)](https://vimeo.com/280733237)
 
 
-## Installation (docker)
+## Installation
+Pull docker image from hub.docker.com and run it
+`docker-compose up`
 
-    docker-compose build
-    docker-compose up
-### wait for the containers to start, then initialize the DB
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd install
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd init --create-default-branch --create-default-roles --create-default-tags
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd adduser --username admin --password admin123 --add-all-roles
-    docker exec -u root epplication_app /etc/init.d/epplication_taskrunner restart
-    docker exec -u epplication epplication_app ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -q -N ""
-    docker exec -u epplication epplication_app mkdir -m 700 /home/epplication/.ssh
-    docker exec -u epplication epplication_app bash -c "cat /home/epplication/EPPlication/ssh_keys/id_rsa.pub >> /home/epplication/.ssh/authorized_keys"
+Build docker image and run it
+`docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
 
-### webinterface
-    http://localhost:8080
-    username: admin
-    password: admin123
+webinterface
+> http://localhost:8080  
+> username: admin  
+> password: admin123
 
-## run development testsuite
-    docker exec epplication_db dropdb -U epplication epplication_testing
-    docker exec epplication_db createdb -U epplication --owner epplication epplication_testing
-    docker exec -u epplication epplication_app bash -c 'CATALYST_CONFIG_LOCAL_SUFFIX=testing CATALYST_DEBUG=1 carton exec plackup -Ilib epplication.psgi --port 3000'
-    docker exec -u epplication epplication_app bash -c 'EPPLICATION_DO_INIT_DB=1 EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=epplication EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 carton exec prove -lvr t'
+## Selenium
+The selenium server can be accessed using `epplication_selenium` as host when creating a SeleniumConnect step.
+
+a VNC server is running on the selenium docker container.
+Connect on port 5900 to see EPPlication controlling the browser.
+`xtightvncviewer localhost::5900`
+VNC password: `secret`
+
+## Run dev testsuite
+Setup test database and run testserver
+```
+docker exec epplication_db dropdb -U epplication epplication_testing
+docker exec epplication_db createdb -U epplication --owner epplication epplication_testing
+docker exec -u epplication epplication_app bash -c 'CATALYST_CONFIG_LOCAL_SUFFIX=testing CATALYST_DEBUG=1 carton exec plackup -Ilib epplication.psgi --port 3000'
+```
+
+Run dev testsuite
+```
+docker exec -u epplication epplication_app bash -c 'EPPLICATION_DO_INIT_DB=1 EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=epplication EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 EPPLICATION_TESTSELENIUM=1 EPPLICATION_TESTSELENIUM_HOST=epplication_selenium EPPLICATION_TESTSELENIUM_PORT=4444 carton exec prove -lvr t'
+```
 
 ## Copyright & License
 Copyright (c) 2012-2018, [David Schmidt](mailto:david.schmidt@univie.ac.at), [Free Artistic 2.0](https://opensource.org/licenses/Artistic-2.0).

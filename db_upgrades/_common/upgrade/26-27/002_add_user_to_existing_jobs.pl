@@ -14,5 +14,7 @@ schema_from_schema_loader(
     { naming => { ALL => 'v8', force_ascii => 1 } },
     sub {
         my ( $schema, $versions ) = @_;
+        # removed code because it contained sensitive data
+        # this should have been a fixup script rather then a DB migration
     }
 );

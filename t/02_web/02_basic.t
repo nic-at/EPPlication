@@ -457,6 +457,58 @@ my @tests = (
                 value2   => "Hello John\nBye",
             }
         },
+        {
+            type       => 'SeleniumConnect',
+            parameters => {
+                name       => 'selenium connect',
+                identifier => 'selenium_001',
+                host       => 'localhost',
+                port       => 4444,
+            },
+        },
+        {
+            type       => 'SeleniumRequest',
+            parameters => {
+                name       => 'selenium request',
+                identifier => 'selenium_001',
+                url        => 'http://epplication.at',
+            },
+        },
+        {
+            type       => 'SeleniumInput',
+            parameters => {
+                name       => 'selenium input',
+                identifier => 'selenium_001',
+                locator    => 'id',
+                selector   => 'username',
+                input      => 'admin',
+            },
+        },
+        {
+            type       => 'SeleniumClick',
+            parameters => {
+                name       => 'selenium click',
+                identifier => 'selenium_001',
+                locator    => 'xpath',
+                selector   => q!//input[@id='submit']!,
+            },
+        },
+        {
+            type       => 'SeleniumContent',
+            parameters => {
+                name         => 'selenium body',
+                identifier   => 'selenium_001',
+                content_type => 'body_html',
+                variable     => 'page_content',
+            },
+        },
+        {
+            type       => 'SeleniumDisconnect',
+            parameters => {
+                name       => 'selenium disconnect',
+                identifier => 'selenium_001',
+            },
+        },
     );
 
     my $counter = 0;
@@ -547,6 +599,15 @@ my @tests = (
         $mech->content_contains("There were errors in your form");
         $mech->content_contains( $step->{expected_err_msg} );
     }
+}
+
+# clone test
+{
+    my $test_name = $tests[0]->{name};
+    my $t = $schema->resultset('Test')->search({ branch_id => $branch_id, name => $test_name })->single;
+    ok( defined $t, "Found test with name '$test_name' in DB." );
+    my $test_id = $t->id;
+    $mech->post_ok("/api/test/clone", {test_id => $test_id});
 }
 
 # delete jobs

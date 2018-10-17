@@ -62,6 +62,7 @@ sub select : Chained('/step/base') Args(0) {
         [qw/ HTTP REST SOAP Whois /],
         [qw/ DB DBConnect DBDisconnect /],
         [qw/ SSH Script /],
+        [qw/ SeleniumConnect SeleniumRequest SeleniumContent SeleniumInput SeleniumClick SeleniumDisconnect /],
     );
 
     #

@@ -12,6 +12,7 @@ use EPPlication::Client::SOAP;
 use EPPlication::Client::REST;
 use EPPlication::Client::HTTP;
 use EPPlication::Client::Whois;
+use EPPlication::Client::Selenium;
 use Template;
 use Template::Constants qw( :debug );
 
@@ -76,6 +77,7 @@ sub get_test_env {
     my $rest_client  = EPPlication::Client::REST->new;
     my $http_client  = EPPlication::Client::HTTP->new;
     my $whois_client = EPPlication::Client::Whois->new;
+    my $selenium_client = EPPlication::Client::Selenium->new;
     my $step_factory = EPPlication::Step::Factory->new;
     my $transformation_factory = EPPlication::Step::Transformation::Factory->new;
     my $stash        = { global => {}, default => {} };
@@ -89,6 +91,7 @@ sub get_test_env {
         rest_client            => $rest_client,
         http_client            => $http_client,
         whois_client           => $whois_client,
+        selenium_client        => $selenium_client,
         tests                  => $tests,
         stash                  => $stash,
         tt                     => $tt,

@@ -403,6 +403,70 @@ public/private keys as <code>ssh_keys/id_rsa.pub</code> and
         command: <code>command</code>
       </td>
     </tr>
+    <tr>
+      <td>SeleniumConnect</td>
+      <td>
+        Connect to a selenium server.
+      </td>
+      <td>
+        host: <code>myhost.at</code><br/>
+        port: <code>4444</code><br/>
+        identifier: <code>selenium_01</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumRequest</td>
+      <td>
+        Request a website.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+        url: <code>http://example.at</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumInput</td>
+      <td>
+        Enter text into an input field.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+        locator: <code>xpath</code><br/>
+        selector: <code>//input[@name='submit']</code><br/>
+        input: <code>foobar</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumClick</td>
+      <td>
+        Click something.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+        locator: <code>xpath</code><br/>
+        locator: <code>//input[@name='submit']</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumContent</td>
+      <td>
+        Get the content of the current page and store it in a variable.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+        variable: <code>page_title</code><br/>
+        type: <code>title</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumDisconnect</td>
+      <td>
+        Disconnect from selenium server.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+      </td>
+    </tr>
   </tbody>
 </table>
 

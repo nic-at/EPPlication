@@ -40,6 +40,22 @@
             case 'EPPConnect':
             case 'EPPDisconnect':
                 break;
+            case 'SeleniumConnect':
+                self.details_text = json.identifier + ' => ' + json.host + ':' + json.port;
+                break;
+            case 'SeleniumRequest':
+                self.details_text = '(' + json.identifier + ') ' + json.url;
+                break;
+            case 'SeleniumInput':
+            case 'SeleniumClick':
+                self.details_text = '(' + json.identifier + ') ' + json.locator + ' = ' + json.selector;
+                break;
+            case 'SeleniumContent':
+                self.details_text = '(' + json.identifier + ') ' + json.variable + ' => ' + json.content_type;
+                break;
+            case 'SeleniumDisconnect':
+                self.details_text = json.identifier;
+                break;
             case 'VarCheck':
             case 'VarVal':
                 self.details_text = json.variable + ' => ' + json.value;

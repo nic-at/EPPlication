@@ -79,6 +79,7 @@ requires 'Template::Plugin::Unicode';
 requires 'IO::File::WithPath';
 requires 'Plack::Middleware::Assets';
 requires 'Clone';
+requires 'Selenium::Remote::Driver';
 
 on 'test' => sub {
     requires 'Test::More' => '0.88';

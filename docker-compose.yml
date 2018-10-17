@@ -9,9 +9,18 @@ services:
             POSTGRES_DB: epplication
         volumes:
             - db_data:/var/lib/postgresql/data
+    selenium:
+        image: selenium/standalone-firefox-debug
+        container_name: epplication_selenium
+        volumes:
+            - /dev/shm:/dev/shm
+        ports:
+            - "5900:5900"
     app:
         container_name: epplication_app
-        build: .
+        image: davewood/epplication:latest
+        depends_on:
+            - db
         volumes:
             - app_data_job_exports:/home/epplication/EPPlication/root/job_exports
             - app_data_ssh_keys:/home/epplication/EPPlication/ssh_keys

@@ -1,3 +1,8 @@
+1.0.2  17.10.2018
+    - new Selenium* steps
+    - docker improvements
+    - docker: initialize app/db at startup
+
 1.0.1  25.09.2018
     - fix testsuite
 
