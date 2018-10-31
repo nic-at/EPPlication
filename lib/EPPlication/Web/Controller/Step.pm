@@ -62,7 +62,7 @@ sub select : Chained('/step/base') Args(0) {
         [qw/ HTTP REST SOAP Whois /],
         [qw/ DB DBConnect DBDisconnect /],
         [qw/ SSH Script /],
-        [qw/ SeleniumConnect SeleniumRequest SeleniumContent SeleniumInput SeleniumClick SeleniumDisconnect /],
+        [qw/ SeleniumConnect SeleniumRequest SeleniumContent SeleniumInput SeleniumClick SeleniumJS SeleniumDisconnect /],
     );
 
     #
@@ -129,7 +129,11 @@ before 'edit' => sub {
     my ($self, $c) = @_;
     my $type = $c->stash->{step}->type;
     $self->_prepare_form($c, $type);
-    $c->stash->{activate_form_fields} = ['hidden_subtest_id'];
+
+    # activate hidden_subtest_id field only for SubTest steps
+    my $subtest_types = $c->model('DB')->schema->subtest_types;
+    $c->stash->{activate_form_fields} = ['hidden_subtest_id']
+      if any { $type eq $_ } @$subtest_types;
 };
 
 __PACKAGE__->meta->make_immutable;

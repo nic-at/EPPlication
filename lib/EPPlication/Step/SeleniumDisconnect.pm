@@ -11,7 +11,8 @@ with
 sub process {
     my ($self) = @_;
 
-    my $identifier = $self->identifier;
+    my $identifier_raw = $self->identifier;
+    my $identifier = $self->process_template($identifier_raw);
 
     $self->add_detail("Driver identifier: $identifier");
 

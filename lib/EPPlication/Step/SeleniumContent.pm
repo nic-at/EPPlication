@@ -12,7 +12,8 @@ with
 sub process {
     my ($self) = @_;
 
-    my $identifier   = $self->identifier;
+    my $identifier_raw = $self->identifier;
+    my $identifier     = $self->process_template($identifier_raw);
     my $variable     = $self->variable;
     my $content_type = $self->content_type;
 

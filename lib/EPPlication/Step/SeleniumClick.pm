@@ -11,9 +11,15 @@ with
 sub process {
     my ($self) = @_;
 
-    my $identifier = $self->identifier;
-    my $locator    = $self->locator;
-    my $selector   = $self->selector;
+    my %conf = ();
+    for my $key (qw/ identifier locator selector /) {
+        my $value_raw = $self->$key;
+        my $value     = $self->process_template($value_raw);
+        $conf{$key} = $value;
+    }
+    my $identifier = $conf{identifier};
+    my $locator    = $conf{locator};
+    my $selector   = $conf{selector};
 
     $self->add_detail("Driver identifier: $identifier");
     $self->add_detail('Locator: ' . $locator);

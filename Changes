@@ -1,3 +1,6 @@
+1.0.3  31.10.2018
+    - new step SeleniumJS (execute javascript)
+
 1.0.2  17.10.2018
     - new Selenium* steps
     - docker improvements

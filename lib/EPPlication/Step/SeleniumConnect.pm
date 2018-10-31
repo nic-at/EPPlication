@@ -14,21 +14,24 @@ with
 sub process {
     my ($self) = @_;
 
-    my $identifier = $self->identifier;
-    my $host       = $self->host;
-    my $port       = $self->port;
+    my %conf = ();
+    for my $key (qw/ identifier host port /) {
+        my $value_raw = $self->$key;
+        my $value     = $self->process_template($value_raw);
+        $conf{$key} = $value;
+    }
 
     $self->add_detail('Create new driver');
-    $self->add_detail('Identifier: ' . $identifier);
+    $self->add_detail('Identifier: ' . $conf{identifier});
 
     die 'driver exists'
-      if $self->selenium_client->driver_exists($identifier);
+      if $self->selenium_client->driver_exists($conf{identifier});
 
     my $driver = Selenium::Remote::Driver->new(
-        remote_server_addr => $host,
-        port => $port,
+        remote_server_addr => $conf{host},
+        port => $conf{port},
     );
-    $self->selenium_client->set_driver($identifier => $driver);
+    $self->selenium_client->set_driver($conf{identifier} => $driver);
     $self->add_detail('Available drivers:');
     for my $driver (keys %{$self->selenium_client->drivers}) {
         $self->add_detail(' '.$driver);

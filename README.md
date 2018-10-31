@@ -25,10 +25,10 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
 
 
 ## Installation
-Pull docker image from hub.docker.com and run it
+Pull docker image from hub.docker.com and run it  
 `docker-compose up`
 
-Build docker image and run it
+Build docker image and run it  
 `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
 
 webinterface
@@ -40,9 +40,8 @@ webinterface
 The selenium server can be accessed using `epplication_selenium` as host when creating a SeleniumConnect step.
 
 a VNC server is running on the selenium docker container.
-Connect on port 5900 to see EPPlication controlling the browser.
-`xtightvncviewer localhost::5900`
-VNC password: `secret`
+Connect on port 5900 to see EPPlication controlling the browser.  
+`xtightvncviewer localhost::5900` (password: `secret`)
 
 ## Run dev testsuite
 Setup test database and run testserver

@@ -444,7 +444,7 @@ public/private keys as <code>ssh_keys/id_rsa.pub</code> and
       <td>
         identifier: <code>selenium_01</code><br/>
         locator: <code>xpath</code><br/>
-        locator: <code>//input[@name='submit']</code>
+        selector: <code>//input[@name='submit']</code>
       </td>
     </tr>
     <tr>
@@ -455,7 +455,17 @@ public/private keys as <code>ssh_keys/id_rsa.pub</code> and
       <td>
         identifier: <code>selenium_01</code><br/>
         variable: <code>page_title</code><br/>
-        type: <code>title</code>
+        content_type: <code>title</code>
+      </td>
+    </tr>
+    <tr>
+      <td>SeleniumJS</td>
+      <td>
+        Execute javascript code.
+      </td>
+      <td>
+        identifier: <code>selenium_01</code><br/>
+        javascript: <code>console.log('foobar');</code><br/>
       </td>
     </tr>
     <tr>

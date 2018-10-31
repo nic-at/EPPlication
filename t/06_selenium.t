@@ -89,6 +89,14 @@ SKIP: {
             },
         },
         {
+            type       => 'SeleniumJS',
+            name       => 'selenium js',
+            parameters => {
+                identifier => 'selenium_001',
+                javascript => 'console.log("foobar");',
+            },
+        },
+        {
             type       => 'SeleniumDisconnect',
             name       => 'selenium disconnect',
             parameters => {

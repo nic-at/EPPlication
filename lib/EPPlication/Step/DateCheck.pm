@@ -37,7 +37,7 @@ sub process {
           . $self->date_to_str($date_upper_boundary) . "\n"
           . "Duration: $duration_str\n";
     }
-    if ( $date_got > $date_upper_boundary ) {
+    elsif ( $date_got > $date_upper_boundary ) {
         die "date_got exceeds upper boundary.\n"
           . "Expected: "
           . $self->date_to_str($date_expected) . "\n"

@@ -46,6 +46,10 @@
             case 'SeleniumRequest':
                 self.details_text = '(' + json.identifier + ') ' + json.url;
                 break;
+            case 'SeleniumJS':
+                self.details_html = epplication.add_modal('javascript', json.javascript);
+                self.details_text = '(' + json.identifier + ') ';
+                break;
             case 'SeleniumInput':
             case 'SeleniumClick':
                 self.details_text = '(' + json.identifier + ') ' + json.locator + ' = ' + json.selector;

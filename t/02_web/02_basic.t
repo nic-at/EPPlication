@@ -503,6 +503,14 @@ my @tests = (
             },
         },
         {
+            type       => 'SeleniumJS',
+            parameters => {
+                name       => 'selenium js',
+                identifier => 'selenium_001',
+                javascript => 'console.log("foobar");',
+            },
+        },
+        {
             type       => 'SeleniumDisconnect',
             parameters => {
                 name       => 'selenium disconnect',
