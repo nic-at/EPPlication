@@ -193,9 +193,9 @@
                 arg.item.move_to(index);
             }
             else if (source_id === 'step_stash_body') {
-                if(sortable.find('.drop-dummy').length > 0) {
-                    // remove dummy and make sure index is 0
-                    sortable.find('.drop-dummy').remove();
+                var dropdummy = sortable.find('.drop-dummy');
+                if(dropdummy.length > 0) {
+                    dropdummy.remove();
                     index = 0;
                 }
                 self.createStep(arg.item, index);

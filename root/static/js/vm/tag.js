@@ -43,12 +43,19 @@
                 tags,
                 function(tag) { return tag['id']; }
             );
-            epplication.active_tags().forEach( function(tag) {
+            // active_tags might be re-indexed due to splice()
+            // iterate in reverse so we don't skip indices
+            var i = epplication.active_tags().length;
+            while (i--) {
+                var tag = epplication.active_tags()[i];
+                if (tag === 'all' || tag === 'untagged') {
+                    continue; // skip "virtual" tags
+                }
                 var index = tag_ids.indexOf(tag);
                 if (index === -1) {
                     epplication.active_tags.splice(index,1);
                 }
-            });
+            };
         };
         self.load = function(){
                     $.ajax({

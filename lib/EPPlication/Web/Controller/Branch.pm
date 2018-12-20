@@ -44,6 +44,11 @@ before 'delete' => sub {
     if (!$c->check_user_roles('can_delete_branches')) {
         $c->detach( $c->controller('Root')->action_for('forbidden') );
     }
+    my $branch        = $c->stash->{ $self->resource_key };
+    my $active_branch = $c->session->{active_branch};
+    if ($branch->id == $active_branch->{id}) {
+      die "You cannot delete the currently active branch.\n";
+    }
 };
 
 sub select: Chained('/branch/base_with_id') PathPart('select') Args(0) {

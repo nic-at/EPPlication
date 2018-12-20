@@ -20,7 +20,6 @@ sub rest_request {
     my $headers_raw   = $self->headers;
     my $headers       = $self->process_template($headers_raw);
     my $method        = $self->method;
-    my $body_raw      = $self->body;
     my $var_result    = $self->var_result;
     my $check_success = $self->check_success;
 
@@ -33,8 +32,6 @@ sub rest_request {
     $self->add_detail("check_success => $check_success");
     $self->add_detail("headers => $headers");
     $self->add_detail("$var_result => $method " . $self->rest_client->config_str . $path . "\n");
-    $self->add_detail("JSON:\n$body_raw\n");
-
     my $body = $self->process_tt_value( 'JSON', $self->body, { between => ":\n", after => "\n" } );
 
     try {

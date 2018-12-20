@@ -17,7 +17,7 @@ sub process {
     my $var_result = $self->var_result;
 
     try {
-        my $body_raw      = $self->body;
+        my $body_raw     = $self->body;
         my $validate_xml = $self->validate_xml;
 
         $self->add_detail( 'Variable: ' . $var_result );

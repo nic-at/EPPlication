@@ -51,7 +51,7 @@ has 'ssl_key' => (
 sub send {
     my ( $self, $xml, $wfcheck ) = @_;
 
-    $wfcheck = defined $wfcheck || 1;
+    $wfcheck = defined $wfcheck ? $wfcheck : 1;
 
     die "EPP client not connected.\n"
       unless $self->connected;
