@@ -1,3 +1,8 @@
+1.0.5  27.02.2019
+    - docker: auto-update DB if new version is available
+    - pretty format EPP response
+    - create branches via Web interface
+
 1.0.4  20.12.2018
     - fix: wrong default value was assigned (EPP validate XML flag)
     - update third party js/css libraries

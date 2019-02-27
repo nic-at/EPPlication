@@ -27,6 +27,7 @@ sub process {
         $self->epp_client->send( $xml, $validate_xml );
 
         my $response_xml = $self->epp_client->receive;
+        $response_xml = $self->str2xml_str( $response_xml );
         $self->add_detail( "\n\nResponse XML:\n$response_xml" );
         my $response_pl   = $self->xml2pl($response_xml);
         my $response_json = $self->pl2json($response_pl);

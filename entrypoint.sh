@@ -5,7 +5,7 @@
 
 set -e
 
-until su -c "PGPASSWORD=epplication psql -h db -U epplication -c '\q'" epplication; do
+until su -c "PGPASSWORD=epplication psql -h epplication_db -U epplication -c '\q'" epplication; do
   echo "Postgres is unavailable - sleeping"
   sleep 1
 done
@@ -21,6 +21,18 @@ if [[ $db_version = *'relation "dbix_class_deploymenthandler_versions" does not 
   su -c 'carton exec script/database.pl --cmd install'
   su -c 'carton exec script/database.pl --cmd init --create-default-branch --create-default-roles --create-default-tags'
   su -c 'carton exec script/database.pl --cmd adduser --username admin --password admin123 --add-all-roles'
+else
+    echo 'check for epplication DB upgrade'
+    set +e
+    db_version=`su -c "carton exec ./script/database.pl --cmd database-version 2>&1" epplication`
+    schema_version=`su -c "carton exec ./script/database.pl --cmd schema-version 2>&1" epplication`
+    set -e
+    echo "db_version: $db_version"
+    echo "schema_version: $schema_version"
+    if (( $db_version < $schema_version )); then
+        echo "update DB"
+        su -c "carton exec ./script/database.pl --cmd upgrade 2>&1" epplication
+    fi
 fi
 
 if [ ! -f /home/epplication/EPPlication/ssh_keys/id_rsa ]; then

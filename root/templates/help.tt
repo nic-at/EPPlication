@@ -407,7 +407,7 @@ public/private keys as <code>ssh_keys/id_rsa.pub</code> and
       <td>SeleniumConnect</td>
       <td>
         Connect to a selenium server.<br/>
-        For each identifier you use a separate browser window is opened.
+        For every identifier, a separate browser window is opened.
       </td>
       <td>
         host: <code>myhost.at</code><br/>

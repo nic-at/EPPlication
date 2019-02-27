@@ -174,7 +174,7 @@ sub clone_POST {
     my $test     = $c->model('DB::Test')->find($test_id);
     my $clone    = $test->clone({ name => $test->name . ' (CLONE)', });
     my $location = $c->uri_for($c->controller('Test')->action_for('edit'), [ $clone->branch_id, $clone->id ]);
-    $c->flash->{msg} = $test->name . ' cloned sucessfully.';
+    $c->flash->{msg} = $test->name . ' cloned successfully.';
     $self->status_created(
         $c,
         location => $location->as_string,

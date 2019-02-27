@@ -126,8 +126,9 @@ sub create_default_roles {
       can_edit_users
       can_delete_users
       can_list_branches
-      can_delete_branches
+      can_create_branches
       can_edit_branches
+      can_delete_branches
       can_list_tags
       can_create_tags
       can_edit_tags

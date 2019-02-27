@@ -20,7 +20,7 @@ __PACKAGE__->add_columns(
     },
 );
 __PACKAGE__->set_primary_key('id');
-__PACKAGE__->add_unique_constraint([ qw/ branch_id name / ]);
+__PACKAGE__->add_unique_constraint('test_branch_id_name' => [qw/ branch_id name /]);
 __PACKAGE__->resultset_class('EPPlication::Schema::ResultSet::Test');
 
 __PACKAGE__->belongs_to(

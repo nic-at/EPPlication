@@ -66,5 +66,16 @@ sub select: Chained('/branch/base_with_id') PathPart('select') Args(0) {
     );
 }
 
+sub clone: Chained('/branch/base_with_id') PathPart('clone') Method('POST') Args(0) {
+    my ( $self, $c ) = @_;
+    if (!$c->check_user_roles('can_create_branches')) {
+        $c->detach( $c->controller('Root')->action_for('forbidden') );
+    }
+    my $branch = $c->stash->{branch};
+    $branch->clone($branch->name . ' (CLONE)');
+    $c->flash->{msg} = 'Branch ' . $branch->name . ' cloned successfully.';
+    $c->res->redirect( $c->req->referer // $c->uri_for($self->action_for('list')) );
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

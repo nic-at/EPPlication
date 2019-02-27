@@ -6,11 +6,13 @@ with 'EPPlication::Web::Role::Form';
 
 has '+item_class' => ( default => 'Test' );
 
+# https://github.com/gshank/html-formhandler-model-dbic/pull/8/commits
+override '_build_unique_constraints' => sub { ['test_branch_id_name'] };
+
 my $re = qr/^[\ \w\-\(\):]+$/xms;
 has_field 'name' => (
     type     => 'Text',
     required => 1,
-    unique   => 1,
     apply    => [
         {   check   => $re,
             message => "Contains invalid characters.",

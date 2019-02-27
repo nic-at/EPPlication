@@ -1,4 +1,4 @@
-[% num_columns = 5 %]
+[% num_columns = 6 %]
 
 [%- FOR type_group = type_groups %]
 

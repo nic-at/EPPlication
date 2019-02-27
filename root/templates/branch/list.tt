@@ -25,6 +25,9 @@
 
             show_delete = 1
             uri_delete  = c.uri_for(c.controller.action_for('delete'), [ branch.id ])
+
+            show_clone  = 1
+            uri_clone   = c.uri_for(c.controller.action_for('clone'), [ branch.id ])
         %]
       </td>
     </tr>

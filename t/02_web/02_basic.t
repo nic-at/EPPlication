@@ -7,8 +7,9 @@ use JSON qw/decode_json/;
 
 my $schema = EPPlication::Util::get_schema;
 
-my $branch    = $schema->resultset('Branch')->single({name=>'master'});
-my $branch_id = $branch->id;
+my $branch_name = 'master';
+my $branch      = $schema->resultset('Branch')->single({name=>$branch_name});
+my $branch_id   = $branch->id;
 
 my $mech
     = Test::WWW::Mechanize::Catalyst->new( catalyst_app => 'EPPlication::Web' );
@@ -616,6 +617,41 @@ my @tests = (
     ok( defined $t, "Found test with name '$test_name' in DB." );
     my $test_id = $t->id;
     $mech->post_ok("/api/test/clone", {test_id => $test_id});
+}
+
+# clone branch
+{
+    my $count_before = $schema->resultset('Test')->count;
+    ok($count_before > 1, "more then 1 tests exist before branch cloning.");
+    $mech->get_ok('/branch/list');
+    my $form_id = 'form_' . $branch_id . '_clone';
+    $mech->submit_form( form_id => $form_id );
+    $mech->content_contains(
+        "Branch $branch_name cloned successfully.",
+        'branch clone success msg found'
+    );
+    $mech->content_contains(
+        "$branch_name (CLONE)",
+        'branch clone name found in list'
+    );
+    my $count_after = $schema->resultset('Test')->count;
+    ok($count_after == $count_before*2, "after branch cloning two times as many tests exist.");
+}
+
+# delete cloned branch
+{
+    my $count_before = $schema->resultset('Test')->count;
+    ok($count_before > 1, "more then 1 tests exist before branch clone deletion.");
+    my $clone = $schema->resultset('Branch')->single({name=>"$branch_name (CLONE)"});
+    my $clone_id = $clone->id;
+    my $form_id = 'form_' . $clone_id . '_delete';
+    $mech->submit_form( form_id => $form_id );
+    $mech->content_contains(
+        "$branch_name (CLONE) deleted.",
+        'branch delete success msg found'
+    );
+    my $count_after = $schema->resultset('Test')->count;
+    ok($count_after*2 == $count_before, "after branch deletion half as many tests exist.");
 }
 
 # delete jobs

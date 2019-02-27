@@ -50,7 +50,7 @@ RUN    cp /home/epplication/EPPlication/nginx.conf /etc/nginx/sites-available/ep
        --user epplication \
        --group epplication \
        --perl '/usr/bin/perl -I/home/epplication/EPPlication/local/lib/perl5 -I/home/epplication/EPPlication/lib' \
-       --db-host db \
+       --db-host epplication_db \
        --db-port 5432 \
        --db-name epplication \
        --db-user epplication \
@@ -60,7 +60,7 @@ RUN    cp /home/epplication/EPPlication/nginx.conf /etc/nginx/sites-available/ep
        --user epplication \
        --group epplication \
        --perl '/usr/bin/perl -I/home/epplication/EPPlication/local/lib/perl5 -I/home/epplication/EPPlication/lib' \
-       --db-host db \
+       --db-host epplication_db \
        --db-port 5432 \
        --db-name epplication_testing \
        --db-user epplication \
