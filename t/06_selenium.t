@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
-use FindBin qw/$Bin/;
-use lib "$Bin/lib";
+use Dir::Self;
+use lib __DIR__ . "/lib";
 use EPPlication::TestKit;
 
 SKIP: {
     skip(
-        'set EPPLICATION_TESTSELENIUM=1 EPPLICATION_TESTSELENIUM_HOST=epplication_selenium EPPLICATION_TESTSELENIUM_PORT=4444 to run Selenium Steptests.',
+        'set EPPLICATION_TESTSELENIUM=1 EPPLICATION_TESTSELENIUM_HOST=epplication-selenium EPPLICATION_TESTSELENIUM_PORT=4444 to run Selenium Steptests.',
         1
     )
       unless ( defined $ENV{EPPLICATION_TESTSELENIUM}
@@ -38,7 +38,7 @@ SKIP: {
             name       => 'selenium request',
             parameters => {
                 identifier => 'selenium_001',
-                url        => 'http://epplication_app/login',
+                url        => 'http://epplication-app/login',
             },
         },
         {

@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use Template;
-use FindBin qw/$Bin/;
+use Dir::Self;
 use Getopt::Long;
 
 my $user;
@@ -49,7 +49,7 @@ my %vars = (
 
 # config for templates
 my $tt_config = {
-    OUTPUT_PATH => "$Bin/..",
+    OUTPUT_PATH => __DIR__ . "/..",
     DEBUG       => 1
 };
 

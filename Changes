@@ -1,3 +1,10 @@
+1.0.6  31.07.2019
+    - use Dir::Self instead of FindBin
+    - use JSON::PP exclusively
+    - make the app more docker friendly
+    - minor bug fixes
+    - delete jobs via database.pl script
+
 1.0.5  27.02.2019
     - docker: auto-update DB if new version is available
     - pretty format EPP response

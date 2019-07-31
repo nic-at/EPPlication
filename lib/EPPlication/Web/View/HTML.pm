@@ -11,7 +11,7 @@ __PACKAGE__->config(
 );
 
 # Plack::Middleware::Assets fills $c->req->env->{'psgix.assets'}
-# with js/css file paths. asstes() exposes these paths to the template.
+# with js/css file paths. assets() exposes these paths to the template.
 sub assets {
     my ( $self, $c ) = @_;
     my %assets = ( js => [], css => [] );

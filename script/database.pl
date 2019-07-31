@@ -3,8 +3,8 @@
 use strict;
 use warnings;
 use feature qw/ say /;
-use FindBin qw/$Bin/;
-use lib "$Bin/../lib";
+use Dir::Self;
+use lib __DIR__ . "/../lib";
 use EPPlication::Util;
 use Getopt::Long;
 use Term::ReadKey;
@@ -54,6 +54,7 @@ usage:
   database.pl --cmd dump-tests --file $file
   database.pl --cmd delete-tests
   database.pl --cmd restore-tests --file $file
+  database.pl --cmd delete-jobs
   database.pl --cmd branch --src-branch $src_branch --dest-branch $dest_branch
 HERE
     exit(0);
@@ -71,6 +72,7 @@ elsif ( $cmd eq 'adduser' )          { adduser() }
 elsif ( $cmd eq 'dump-tests' )       { dump_tests() }
 elsif ( $cmd eq 'delete-tests' )     { delete_tests() }
 elsif ( $cmd eq 'restore-tests' )    { restore_tests() }
+elsif ( $cmd eq 'delete-jobs' )      { delete_jobs() }
 elsif ( $cmd eq 'branch' )           { branch() }
 else                                 { usage() }
 
@@ -303,6 +305,28 @@ sub branch {
         unless $branch;
     say "Creating branch $dest_branch from $src_branch";
     $branch->clone($dest_branch);
+}
+
+sub delete_jobs {
+    my ($user, $password, $host, $database, $port) = _get_pg_cli_params;
+
+    my $psql = Pg::CLI::psql->new(
+        username => $user,
+        password => $password,
+        host     => $host,
+        port     => $port,
+    );
+
+    my $stderr;
+    my $sql = 'DELETE FROM "job";';
+    say "Deleting jobs ...";
+    $psql->run(
+        database => $database,
+        stdin    => \$sql,
+        stderr   => \$stderr,
+    );
+    die "Error: $stderr" if $stderr;
+    say "jobs deleted successfully.";
 }
 
 sub restore_tests {

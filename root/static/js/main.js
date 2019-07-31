@@ -1,10 +1,10 @@
 (function( epplication, undefined ) {
     'use strict';
 
-    if ( window.location.pathname.match(/^\/tag\/list/)) { document.title = 'Tags' }
-    else if ( window.location.pathname.match(/^\/user\/list/)) { document.title = 'Users' }
-    else if ( window.location.pathname.match(/^\/report\/list/)) { document.title = 'Reports' }
-    else if ( window.location.pathname.match(/^\/help/)) { document.title = 'Help' }
+    if ( window.location.pathname.match(/\/tag\/list/)) { document.title = 'Tags' }
+    else if ( window.location.pathname.match(/\/user\/list/)) { document.title = 'Users' }
+    else if ( window.location.pathname.match(/\/report\/list/)) { document.title = 'Reports' }
+    else if ( window.location.pathname.match(/\/help/)) { document.title = 'Help' }
 
     epplication.show_error = function(error_msg) {
       $('#content').prepend(

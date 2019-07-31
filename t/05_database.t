@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-use FindBin qw/$Bin/;
-use lib "$Bin/lib";
+use Dir::Self;
+use lib __DIR__ . "/lib";
 use EPPlication::TestKit;
 use File::Temp qw/ tmpnam /;
 
@@ -15,7 +15,7 @@ $tests{"test_$_"} = create_test("test_$_") for 1 .. $num_tests;
 
 is( _num_tests(), $num_tests, "we have $num_tests tests." );
 
-my $dbscript_path = "$Bin/../script/database.pl";
+my $dbscript_path = __DIR__ . "/../script/database.pl";
 {
     my $res = qx/$dbscript_path --cmd version/;
     diag $res;
@@ -61,6 +61,16 @@ my $dbscript_path = "$Bin/../script/database.pl";
     is(_num_tests(), $num_tests, "we have $num_tests again after branch was deleted." );
 }
 
+{
+    # delete-jobs
+    create_job();
+    my $num_jobs = _num_jobs();
+    ok($num_jobs >=1, 'we have at least 1 job');
+    my $res = qx/$dbscript_path --cmd delete-jobs/;
+    diag $res;
+    is(_num_jobs(), 0, "0 jobs in DB" );
+}
+
 $tests{"test_$_"}->delete for 1 .. $num_tests;
 $tag->delete;
 
@@ -68,6 +78,22 @@ done_testing();
 
 sub _num_tests {
     return $schema->resultset('Test')->count();
+}
+sub _num_jobs {
+    return $schema->resultset('Job')->count();
+}
+
+sub create_job {
+    my $test = $tests{"test_1"};
+    my $user = $schema->resultset('User')->first;
+    my $job = $schema->resultset('Job')->create(
+        {
+            test_id   => $test->id,
+            type      => 'test',
+            user_id   => $user->id,
+        }
+    );
+    ok($job, "job created");
 }
 
 sub create_test {

@@ -1,7 +1,7 @@
 (function( epplication, undefined ) {
     'use strict';
 
-    if (!window.location.pathname.match(/^\/job\/list/)) {return}
+    if (!window.location.pathname.match(/\/job\/list/)) {return}
 
     function Job(data){
         var self = this;

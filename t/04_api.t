@@ -1,10 +1,10 @@
 #!/usr/bin/env perl
-use FindBin qw/$Bin/;
-use lib "$Bin/lib";
+use Dir::Self;
+use lib __DIR__ . "/lib";
 use EPPlication::TestKit;
 use HTTP::Tiny;
 use HTTP::CookieJar;
-use JSON qw/ encode_json decode_json /;
+use JSON::PP;
 
 SKIP: {
     skip("Start EPPlication server with 'CATALYST_CONFIG_LOCAL_SUFFIX=testing plackup -Ilib  epplication.psgi --port 3000' and run prove with EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 to run CLI tests.", 1)
@@ -27,7 +27,7 @@ SKIP: {
             { content => $content_raw },
         );
         my $status = $res->{status};
-        is( $res->{status}, 200, 'response status 200' );
+        is( $res->{status}, 200, 'login response status 200' );
     }
 
     my $schema      = EPPlication::Util::get_schema();
@@ -69,7 +69,7 @@ SKIP: {
             'GET',
             "$host:$port/api/test?tags=all&branch_id=$branch_id",
         );
-        is( $res->{status}, 200, 'response status 200' );
+        is( $res->{status}, 200, 'get tests via api, response status 200' );
         my $tests = decode_json($res->{content});
         is(scalar @$tests, 1, '1 test found.');
         is($tests->[0]->{name}, 'some_test_name', 'correct test name');
@@ -80,7 +80,7 @@ SKIP: {
                     'GET',
                     "$host:$port/api/job?filter=all",
                 );
-                is( $res->{status}, 200, 'response status 200' );
+                is( $res->{status}, 200, 'get jobs via api, response status 200' );
                 my $jobs = decode_json($res->{content});
                 return $jobs;
             }

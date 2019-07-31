@@ -2,9 +2,9 @@
     'use strict';
 
     if (
-        !window.location.pathname.match(/^\/branch\/\d+\/test\/\d+\/step\/\d+\/edit/)
+        !window.location.pathname.match(/\/branch\/\d+\/test\/\d+\/step\/\d+\/edit/)
         &&
-        !window.location.pathname.match(/^\/branch\/\d+\/test\/\d+\/step\/create/)
+        !window.location.pathname.match(/\/branch\/\d+\/test\/\d+\/step\/create/)
     ) {
         return;
     }

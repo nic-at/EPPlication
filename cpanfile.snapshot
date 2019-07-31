@@ -738,19 +738,19 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 6.30
       Test::Most 0
       parent 0
-  CatalystX-Resource-0.02
-    pathname: D/DA/DAVEWOOD/CatalystX-Resource-0.02.tar.gz
+  CatalystX-Resource-0.03
+    pathname: D/DA/DAVEWOOD/CatalystX-Resource-0.03.tar.gz
     provides:
-      CatalystX::Resource 0.02
-      CatalystX::Resource::Controller::Resource 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Create 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Delete 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Edit 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Form 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::List 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::MergeUploadParams 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Show 0.02
-      CatalystX::Resource::TraitFor::Controller::Resource::Sortable 0.02
+      CatalystX::Resource 0.03
+      CatalystX::Resource::Controller::Resource 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Create 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Delete 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Edit 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Form 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::List 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::MergeUploadParams 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Show 0.03
+      CatalystX::Resource::TraitFor::Controller::Resource::Sortable 0.03
     requirements:
       Catalyst::Controller::ActionRole 0
       Catalyst::Model::DBIC::Schema 0
@@ -4715,10 +4715,10 @@ DISTRIBUTIONS
       Test::NoWarnings 0
       Unicode::Normalize 0
       perl 5.008005
-  Net-SSH2-0.69
-    pathname: S/SA/SALVA/Net-SSH2-0.69.tar.gz
+  Net-SSH2-0.70
+    pathname: S/SA/SALVA/Net-SSH2-0.70.tar.gz
     provides:
-      Net::SSH2 0.69
+      Net::SSH2 0.70
       Net::SSH2::Channel undef
       Net::SSH2::Dir undef
       Net::SSH2::File undef

@@ -1,7 +1,7 @@
 (function( epplication, undefined ) {
     'use strict';
 
-    if (!window.location.pathname.match(/^\/job\/\d+\/show/)) {return}
+    if (!window.location.pathname.match(/\/job\/\d+\/show/)) {return}
 
     function set_job(self, data){
         self.status(data.status);

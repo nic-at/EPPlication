@@ -5,7 +5,7 @@
 
 set -e
 
-until su -c "PGPASSWORD=epplication psql -h epplication_db -U epplication -c '\q'" epplication; do
+until su -c "PGPASSWORD=epplication psql -h epplication-db -U epplication -c '\q'" epplication; do
   echo "Postgres is unavailable - sleeping"
   sleep 1
 done
@@ -37,13 +37,14 @@ fi
 
 if [ ! -f /home/epplication/EPPlication/ssh_keys/id_rsa ]; then
   echo 'ssh-keygen'
-  su -c 'ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -q -N ""' epplication
+  su -c 'ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -N ""' epplication
 fi
 
 if [ ! -d /home/epplication/.ssh ]; then
   echo 'allow epplication ssh key'
   su -c 'mkdir -m 700 /home/epplication/.ssh' epplication
-  su -c 'bash -c "cat /home/epplication/EPPlication/ssh_keys/id_rsa.pub >> /home/epplication/.ssh/authorized_keys"'
+  su -c 'cp /home/epplication/EPPlication/ssh_keys/id_rsa.pub /home/epplication/.ssh/authorized_keys' epplication
+  su -c 'chmod 600 /home/epplication/.ssh/authorized_keys' epplication
 fi
 
 /etc/init.d/ssh restart \

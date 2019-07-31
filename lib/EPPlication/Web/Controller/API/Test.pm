@@ -18,7 +18,7 @@ sub _apply_search_query {
         escape_sequences => { '_' => '\_', '%', '\%' },
     );
     my $res = $parser->process($query_str);
-    die join( "\n", @{ $res->{errors} } )
+    $c->detach( $c->controller('API::Root')->action_for('error'), [join( "\n", @{ $res->{errors} } )] )
       if exists $res->{errors};
 
     if ( exists $res->{keywords} ) {

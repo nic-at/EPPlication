@@ -1,7 +1,7 @@
 (function( epplication, undefined ) {
     'use strict';
 
-    if (!window.location.pathname.match(/^\/branch\/\d+\/test\/list/)) {return}
+    if (!window.location.pathname.match(/\/branch\/\d+\/test\/list/)) {return}
 
     function Test(data){
         var self = this;

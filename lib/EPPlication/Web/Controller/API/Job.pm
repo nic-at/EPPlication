@@ -24,33 +24,39 @@ sub index_GET {
     my @jobs = $jobs->default_order->all;
     my @jobs_data = ();
     for my $job (@jobs) {
-        my %data = $job->get_columns;
-        $data{created} = $job->created->set_time_zone('Europe/Vienna')
-          ->strftime('%d.%m.%Y %H:%M:%S');
-        $data{duration} =
-          defined $data{duration} ? sprintf( '%.2f', $data{duration} ) : '';
-        $data{num_steps} = defined $data{num_steps} ? $data{num_steps} : '';
-        $data{errors}  = defined $data{errors} ? $data{errors} : '';
-        $data{user}    = defined $job->user ? $job->user->name : '';
-        if (defined $job->config_id) {
-            $data{config} = $job->config->name;
-            $data{config_url} = $c->uri_for($c->controller('Test')->action_for('show'), [ $job->config->branch_id, $job->config_id ]);
-        }
-        if (defined $job->test_id) {
-            $data{test} = $job->test->name;
-            $data{test_url} = $c->uri_for($c->controller('Test')->action_for('show'), [ $job->test->branch_id,  $job->test_id ]);
-            $data{branch} = $job->test->branch->name;
-        }
-        $data{comment} = defined $data{comment} ? $data{comment} : '';
-        $data{edit_url} = $c->uri_for($c->controller('Job')->action_for('edit'), [ $job->id ]);
-        $data{show_url} = $c->uri_for($c->controller('Job')->action_for('show'), [ $job->id ]);
-        push( @jobs_data, \%data );
+        push( @jobs_data, _prepare_job_data($c, $job) );
     }
     $self->status_ok(
         $c,
         entity => \@jobs_data,
     );
 }
+
+sub _prepare_job_data {
+    my ($c, $job) = @_;
+    my %data = $job->get_columns;
+    $data{created} = $job->created->set_time_zone('Europe/Vienna')
+      ->strftime('%d.%m.%Y %H:%M:%S');
+    $data{duration} =
+      defined $data{duration} ? sprintf( '%.2f', $data{duration} ) : '';
+    $data{num_steps} = defined $data{num_steps} ? $data{num_steps} : '';
+    $data{errors}  = defined $data{errors} ? $data{errors} : '';
+    $data{user}    = defined $job->user ? $job->user->name : '';
+    if (defined $job->config_id) {
+        $data{config} = $job->config->name;
+        $data{config_url} = $c->uri_for($c->controller('Test')->action_for('show'), [ $job->config->branch_id, $job->config_id ]);
+    }
+    if (defined $job->test_id) {
+        $data{test} = $job->test->name;
+        $data{test_url} = $c->uri_for($c->controller('Test')->action_for('show'), [ $job->test->branch_id,  $job->test_id ]);
+        $data{branch} = $job->test->branch->name;
+    }
+    $data{comment} = defined $data{comment} ? $data{comment} : '';
+    $data{edit_url} = $c->uri_for($c->controller('Job')->action_for('edit'), [ $job->id ]);
+    $data{show_url} = $c->uri_for($c->controller('Job')->action_for('show'), [ $job->id ]);
+    return \%data;
+}
+
 sub index_POST {
     my ( $self, $c ) = @_;
 

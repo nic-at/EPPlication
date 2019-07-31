@@ -2,7 +2,7 @@
     'use strict';
 
     if (
-        !window.location.pathname.match(/^\/job\/list/)
+        !window.location.pathname.match(/\/job\/list/)
     ) {
         return;
     }

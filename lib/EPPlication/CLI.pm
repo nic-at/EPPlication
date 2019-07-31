@@ -137,7 +137,7 @@ sub create_job {
 Returns the job details on success. I<$job-E<gt>{status}> can be
 one of the values 'pending'|'in_progress'|'finished'|'error'.
 If the job is finished I<$job-E<gt>{summary}> contains a hashref
-with the keys I<num_steps> and I<errors>.
+with the keys I<num_steps>, I<duration> and I<errors>.
 If no I<job> exists for the provided id I<undef> is returned.
 In case of an error an exception is thrown.
 

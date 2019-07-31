@@ -3,7 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
-our $VERSION = '1.0.5';
+our $VERSION = '1.0.6';
 
 use Catalyst qw/
     ConfigLoader
@@ -51,7 +51,6 @@ my @css_files = (
 
 __PACKAGE__->config(
     name                                        => 'EPPlication::Web',
-    encoding                                    => 'UTF-8',
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1,                        # Send X-Catalyst header
     'Plugin::Session'      => { flash_to_stash => 1 },
@@ -64,7 +63,7 @@ __PACKAGE__->config(
         'Assets' => {
             type => 'css',
             files => \@css_files,
-        }
+        },
     ],
     'View::HTML' => {
         INCLUDE_PATH => [ __PACKAGE__->path_to(qw/ root templates /)->stringify ],

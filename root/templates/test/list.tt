@@ -2,7 +2,7 @@
 <!-- ko with: $root.test_vm -->
 <form class="form-inline" id="search-query">
   <div class="form-group">
-    <input class="form-control" type="text" data-bind="value: search_query">
+    <input class="form-control" type="text" placeholder="comment: name:" data-bind="value: search_query">
     <span class="btn btn-default" type="button" data-bind="click: load"><i class="glyphicon glyphicon-search"></i></span>
   </div>
 </form>

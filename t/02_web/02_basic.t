@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-use FindBin qw/$Bin/;
-use lib "$Bin/../lib";
+use Dir::Self;
+use lib __DIR__ . "/../lib";
 use EPPlication::TestKit;
 use Test::WWW::Mechanize::Catalyst;
-use JSON qw/decode_json/;
+use JSON::PP;
 
 my $schema = EPPlication::Util::get_schema;
 

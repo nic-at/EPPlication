@@ -61,6 +61,9 @@ sub select: Chained('/branch/base_with_id') PathPart('select') Args(0) {
         }
     );
     $c->flash->{msg} = "Switched to branch: ".$branch->name;
+    $c->visit(
+        $c->controller('Test')->action_for('clear_config')
+    );
     $c->res->redirect(
         $c->uri_for($c->controller('Test')->action_for('list'), [ $branch->id ])
     );

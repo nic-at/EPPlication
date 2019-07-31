@@ -2,16 +2,16 @@
 
 use warnings;
 use strict;
+use Dir::Self;
+use lib __DIR__ . "/../lib";
 use Daemon::Control;
-use FindBin qw/$Bin/;
-use lib "$Bin/../lib";
 use EPPlication::Util::Config;
 
 my $config = EPPlication::Util::Config->get();
 
 my $perl     = $config->{perl};
 my $name     = 'EPPlicationTaskRunner';
-my $root     = $Bin;
+my $root     = __DIR__;
 my $program  = "$perl $root/epplication_taskrunner.pl";
 my $pid_file = $config->{TaskRunner}{pid_file};
 my $log_file = $config->{log_file};

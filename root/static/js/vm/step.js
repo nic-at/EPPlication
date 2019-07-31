@@ -1,7 +1,7 @@
 (function( epplication, undefined ) {
     'use strict';
 
-    if (!window.location.pathname.match(/^\/branch\/\d+\/test\/\d+\/show/)) {return}
+    if (!window.location.pathname.match(/\/branch\/\d+\/test\/\d+\/show/)) {return}
     var sortable = $('#steps');
     if (!sortable.length) {return}
 

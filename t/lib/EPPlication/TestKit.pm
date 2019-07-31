@@ -2,9 +2,9 @@ package EPPlication::TestKit;
 
 use strict;
 use warnings;
+use Dir::Self;
+use lib __DIR__ . "/../lib";
 use Import::Into;
-use FindBin qw/$Bin/;
-use lib "$Bin/../lib";
 use EPPlication::Util;
 use Test::More;
 use Test::Warnings;

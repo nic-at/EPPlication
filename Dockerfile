@@ -44,13 +44,11 @@ RUN    cp /home/epplication/EPPlication/nginx.conf /etc/nginx/sites-available/ep
     && chown -R epplication:epplication /var/log/epplication \
     && mkdir /var/run/epplication \
     && chown epplication:epplication /var/run/epplication \
-    && mkdir /home/epplication/EPPlication/ssh_keys \
-    && mkdir -p /home/epplication/EPPlication/root/job_exports \
     && carton exec script/epplication_config_helper.pl \
        --user epplication \
        --group epplication \
        --perl '/usr/bin/perl -I/home/epplication/EPPlication/local/lib/perl5 -I/home/epplication/EPPlication/lib' \
-       --db-host epplication_db \
+       --db-host epplication-db \
        --db-port 5432 \
        --db-name epplication \
        --db-user epplication \
@@ -60,17 +58,18 @@ RUN    cp /home/epplication/EPPlication/nginx.conf /etc/nginx/sites-available/ep
        --user epplication \
        --group epplication \
        --perl '/usr/bin/perl -I/home/epplication/EPPlication/local/lib/perl5 -I/home/epplication/EPPlication/lib' \
-       --db-host epplication_db \
+       --db-host epplication-db \
        --db-port 5432 \
        --db-name epplication_testing \
        --db-user epplication \
        --db-password epplication \
        > epplication_web_testing.pl \
+    && mkdir /home/epplication/EPPlication/ssh_keys \
+    && mkdir /home/epplication/EPPlication/root/job_exports \
     && chown -R epplication:epplication /home/epplication/EPPlication \
     && rm /etc/nginx/sites-enabled/default
 
 VOLUME /home/epplication/EPPlication/ssh_keys
 VOLUME /home/epplication/EPPlication/root/job_exports
 EXPOSE 80
-
-CMD ["bash", "./entrypoint.sh"]
+CMD ["bash", "./docker_entrypoint.sh"]

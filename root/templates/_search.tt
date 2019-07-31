@@ -1,6 +1,0 @@
-<form class="form-inline" id="search-query" method="GET">
-  <div class="form-group">
-    <input class="form-control" type="text" id="search" name="search"[% IF search_query %] value="[% search_query | html %]"[% END %]>
-    <button type="submit" class="btn btn-default btn-search"><i class="glyphicon glyphicon-search"></i></button>
-  </div>
-</form>

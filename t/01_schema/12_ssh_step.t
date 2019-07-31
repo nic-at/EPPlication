@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-use FindBin qw/$Bin/;
-use lib "$Bin/../lib";
+use Dir::Self;
+use lib __DIR__ . "/../lib";
 use EPPlication::TestKit;
 use Encode qw/ encode_utf8 /;
 

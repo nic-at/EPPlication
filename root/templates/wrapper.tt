@@ -8,7 +8,7 @@
     <title>EPPlication</title>
 
     [% FOR asset IN assets().css %]
-      <link href="[% asset %]" rel="stylesheet">
+      <link href="[% c.uri_for(asset) %]" rel="stylesheet">
     [% END %]
   </head>
 
@@ -182,7 +182,7 @@
       [% content %]
     </div>
     [% FOR asset IN assets().js %]
-      <script src="[% asset %]"></script>
+      <script src="[% c.uri_for(asset) %]"></script>
     [% END %]
   </body>
 </html>

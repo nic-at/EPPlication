@@ -2,7 +2,7 @@ version: '3'
 services:
     db:
         image: postgres:9.6-alpine
-        container_name: epplication_db
+        container_name: epplication-db
         environment:
             POSTGRES_USER: epplication
             POSTGRES_PASSWORD: epplication
@@ -11,13 +11,13 @@ services:
             - db_data:/var/lib/postgresql/data
     selenium:
         image: selenium/standalone-firefox-debug
-        container_name: epplication_selenium
+        container_name: epplication-selenium
         volumes:
             - /dev/shm:/dev/shm
         ports:
             - "5900:5900"
     app:
-        container_name: epplication_app
+        container_name: epplication-app
         image: davewood/epplication:latest
         depends_on:
             - db
