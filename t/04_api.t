@@ -30,6 +30,15 @@ SKIP: {
         is( $res->{status}, 200, 'login response status 200' );
     }
 
+    {
+        my $res = $http->request( 'GET', "$host:$port/api/user" );
+        is( $res->{status}, 200, 'get user list via api, response status 200' );
+        my $users = decode_json($res->{content});
+        is(scalar @$users, 1, '1 user found.');
+        is($users->[0]->{name}, 'testuser', 'correct user name');
+        ok(!exists $users->[0]->{password}, 'we didnt send the users crypted pw');
+    }
+
     my $schema      = EPPlication::Util::get_schema();
     my $branch_name = 'master';
     my $branch      = $schema->resultset('Branch')->find($branch_name, {key=>'branch_name'});

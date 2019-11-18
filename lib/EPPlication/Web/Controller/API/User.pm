@@ -13,7 +13,8 @@ sub index_GET {
     my @users_data = ();
     for my $user (@users) {
         my %user_data = $user->get_columns;
-        push(@users_data, \%user_data);
+        my %response_data = map {$_ => $user_data{$_}} qw/id name/;
+        push(@users_data, \%response_data);
     }
     $self->status_ok(
         $c,

@@ -3,7 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
-our $VERSION = '1.0.6';
+our $VERSION = '1.0.7';
 
 use Catalyst qw/
     ConfigLoader

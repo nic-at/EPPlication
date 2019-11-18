@@ -59,7 +59,9 @@ sub process_utf8_header {
     my ( $self, $response ) = @_;
     if ( exists $response->{headers}{'content-type'} ) {
         my $content_type = lc( $response->{headers}{'content-type'} );
-        if ( $content_type =~ m/charset=utf-8/xms ) {
+        if (    $content_type =~ m/charset=utf-8/xms
+             || $content_type =~ m/application\/json/xms
+        ) {
             $response->{content} = decode_utf8( $response->{content} );
         }
     }

@@ -160,7 +160,6 @@ sub item_PUT {
     my ( $self, $c, $test_id ) = @_;
     my $test = $c->model('DB::Test')->find($test_id);
     my $new_test_name = $c->req->data->{test_name};
-    warn $new_test_name;
     $test->update({ name => $new_test_name });
     $self->status_ok(
         $c,
