@@ -12,6 +12,7 @@ sub make_variant {
 
     my $name    = exists $arguments{name}  ? $arguments{name}  : 'value';
     my $label   = exists $arguments{label} ? $arguments{label} : ucfirst($name);
+    my $required = exists $arguments{required} ? $arguments{required} : 1;
 
     my %element_attr;
 
@@ -25,7 +26,7 @@ sub make_variant {
     has_field $name => (
         type         => 'TextArea',
         label        => $label,
-        required     => 1,
+        required     => $required,
         noupdate     => 1,
         not_nullable => 1,
         trim         => 0,

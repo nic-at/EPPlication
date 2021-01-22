@@ -64,6 +64,42 @@ my @steps = (
             duration => '1 minute',
         },
     },
+    {
+        type       => 'DateCheck',
+        name       => 'failing check',
+        parameters => {
+            date_got      => '[% mydate1 %]',
+            date_expected => '[% mydate2 %]',
+            duration => '1 minute, 7 seconds',
+        },
+    },
+    {
+        type       => 'DateCheck',
+        name       => 'check',
+        parameters => {
+            date_got      => '[% mydate1 %]',
+            date_expected => '[% mydate2 %]',
+            duration => '1 year, 7 seconds',
+        },
+    },
+    {
+        type       => 'DateDiff',
+        name       => 'diff_positive',
+        parameters => {
+            date1    => '[% mydate1 %]',
+            date2    => '[% mydate2 %]',
+            variable => 'diff_negative',
+        },
+    },
+    {
+        type       => 'DateDiff',
+        name       => 'diff_negative',
+        parameters => {
+            date1    => '[% mydate2 %]',
+            date2    => '[% mydate1 %]',
+            variable => 'diff_positive',
+        },
+    },
 );
 
 for my $step_data (@steps) {
@@ -83,7 +119,7 @@ ok($job, "job created");
 my $test_env = EPPlication::Util::get_test_env();
 
 my $stats = $job->run($test_env);
-is($stats->{errors}, 1, 'job has 1 error');
+is($stats->{errors}, 2, 'job has 2 errors');
 my $num_steps = scalar(@steps);
 $num_steps += 2; # +1 for root node (1), +1 for test root node (1.1)
 is($stats->{num_steps}, $num_steps, 'num_steps is correct');
@@ -107,6 +143,23 @@ for my $result ( $job->step_results->default_order->all ) {
                 $result->details,
                 qr/date_got\ exceeds\ lower\ boundary/,
                 "Correct error msg received."
+            );
+        }
+    }
+    elsif ( $result->type eq 'DateDiff' ) {
+        is( $result->status, "ok", "Step '" . $result->name . "' result status is 'ok'" );
+        if ( $result->name eq 'diff_positive' ) {
+            like(
+                $result->details,
+                qr/[^-]1\ years/,
+                "result contains positive year."
+            );
+        }
+        elsif ( $result->name eq 'diff_negative' ) {
+            like(
+                $result->details,
+                qr/-1\ years/,
+                "result contains negative year."
             );
         }
     }

@@ -164,6 +164,7 @@ sub list_variables {
                     CountQueryPath
                     DateAdd
                     DateFormat
+                    DateDiff
                     Transformation
                     Math
                     SSH
@@ -204,6 +205,9 @@ sub list_variables {
         }
         elsif ( $type eq 'DateAdd' ) {
             _add_value_to_var($vars_hash, $step, 'variable', $step->parameters->{date} . ' + ' . $step->parameters->{duration});
+        }
+        elsif ( $type eq 'DateDiff' ) {
+            _add_value_to_var($vars_hash, $step, 'variable', $step->parameters->{date2} . ' - ' . $step->parameters->{date1});
         }
         elsif ( $type eq 'DateFormat' ) {
             _add_value_to_var($vars_hash, $step, 'variable', $step->parameters->{date_format_str} . ' (' . $step->parameters->{date} . ')');

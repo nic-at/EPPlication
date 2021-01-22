@@ -18,17 +18,17 @@ sub parse_datetime {
 sub parse_duration {
     my ( $self, $value ) = @_;
 
-    my $re = qr/^(-?)(\d+)\ (years?|months?|days?|hours?|minutes?|seconds?)$/xms;
-    die qq{Invalid duration format: "$value"}
-        unless $value =~ m/$re/;
+    my $re = qr/(-?)(\d+)\ (years?|months?|days?|hours?|minutes?|seconds?)/xms;
+    my @matches = $value =~ m/$re/g;
+    die qq{Invalid duration format: "$value"} unless scalar @matches;
 
     my %unit_pattern_mapping = (
         year    => '%Y',
         years   => '%Y',
         month   => '%m',
         months  => '%m',
-        day     => '%e',
-        days    => '%e',
+        day     => '%d',
+        days    => '%d',
         hour    => '%H',
         hours   => '%H',
         minute  => '%M',
@@ -36,11 +36,16 @@ sub parse_duration {
         second  => '%S',
         seconds => '%S',
     );
-    my $negative = $1;
-    my $amount   = $2;
-    my $unit     = $3;
-    my $pattern  = $unit_pattern_mapping{$unit};
-    my $formatter = DateTime::Format::Duration->new( pattern => $pattern );
+
+    my @patterns = ();
+    while (scalar @matches) {
+        my $negative = shift @matches;
+        my $amount   = shift @matches;
+        my $unit     = shift @matches;
+        push @patterns, $unit_pattern_mapping{$unit} . ' ' . $unit;
+    }
+    my $pattern = join(', ', @patterns);
+    my $formatter = DateTime::Format::Duration->new( pattern => $pattern, normalize => 1 );
     my $dur = $formatter->parse_duration($value);
 
     die "$value is a zero duration.\n"
@@ -58,6 +63,18 @@ sub format_datetime {
     );
     my $formatted_date = $formatter->format_datetime($date);
     return $formatted_date;
+}
+
+sub format_duration {
+    my ( $self, $duration ) = @_;
+    my $duration_format_str = $duration->is_negative
+        ? '-%Y years, -%m months, -%e days, -%H hours, -%M minutes, -%S seconds'
+        : '%Y years, %m months, %e days, %H hours, %M minutes, %S seconds';
+    my $formatter = DateTime::Format::Duration->new(
+        pattern => $duration_format_str,
+        normalize => 1,
+    );
+    return $formatter->format_duration($duration);
 }
 
 sub date_to_str {

@@ -1,7 +1,7 @@
 version: '3'
 services:
     db:
-        image: postgres:9.6-alpine
+        image: postgres:11-alpine
         container_name: epplication-db
         environment:
             POSTGRES_USER: epplication

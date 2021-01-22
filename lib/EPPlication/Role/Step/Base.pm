@@ -131,13 +131,14 @@ sub process_tt_value {
     my $before   = exists $options->{before}   ? $options->{before}   : '';
     my $between  = exists $options->{between}  ? $options->{between}  : ': ';
     my $after    = exists $options->{after}    ? $options->{after}    : '';
+    my $show     = exists $options->{show}     ? $options->{show}     : 1;
     my $show_raw = exists $options->{show_raw} ? $options->{show_raw} : 1;
 
     $self->add_detail($before . $name . $between . $value_raw . $after)
         if $show_raw;
     my $value = $self->process_template($value_raw);
-    $self->add_detail( $before . $name . $between . $value . $after )
-      if $value ne $value_raw;
+    $self->add_detail($before . $name . $between . $value . $after)
+        if $show && $value ne $value_raw;
 
     return $value;
 }

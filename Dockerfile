@@ -1,4 +1,7 @@
-FROM debian:stretch
+FROM debian:buster-slim
+
+# create man dirs manually because otherwise psql won't install on debian-slim
+RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
 
 RUN    apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -12,8 +15,8 @@ RUN    apt-get update \
        libssh2-1-dev \
        libxml2-dev \
        zlib1g-dev \
-       postgresql-server-dev-9.6 \
-       postgresql-client-9.6 \
+       postgresql-server-dev-11 \
+       postgresql-client-11 \
        nginx \
        ssh \
        libexpat1-dev \
@@ -21,8 +24,9 @@ RUN    apt-get update \
 
 RUN cpanm Config::ZOMG && rm -rf ~/.cpanm
 
+ARG CONTAINER_UID=1000
 RUN useradd --create-home --home-dir /home/epplication \
-            --user-group --shell /bin/bash epplication
+            --uid $CONTAINER_UID --user-group --shell /bin/bash epplication
 
 WORKDIR /home/epplication/EPPlication
 COPY --chown=epplication:epplication ./cpanfile /home/epplication/EPPlication/

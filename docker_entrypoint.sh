@@ -37,7 +37,7 @@ fi
 
 if [ ! -f /home/epplication/EPPlication/ssh_keys/id_rsa ]; then
   echo 'ssh-keygen'
-  su -c 'ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -N ""' epplication
+  su -c 'ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -N "" -m PEM' epplication
 fi
 
 if [ ! -d /home/epplication/.ssh ]; then

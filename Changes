@@ -1,3 +1,9 @@
+1.0.8  18.12.2020
+    - dont reuse http connections
+    - new step DateDiff
+    - allow more complex durations for DateFormat
+    - add PATCH verb to HTTP requests
+
 1.0.7  18.11.2019
     - default encoding for application/json is utf8
     - dont send encrypted user pw from API

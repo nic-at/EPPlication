@@ -49,7 +49,7 @@
         self.errors       = ko.observable();
         self.status_class = ko.observable();
 
-        document.title    = self.test_name;
+        document.title    = '(J) ' + self.test_name;
 
         var load_job_cb = function(data) {
             set_job(self, data);

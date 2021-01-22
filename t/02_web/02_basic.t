@@ -423,6 +423,15 @@ my @tests = (
             }
         },
         {
+            type       => 'DateDiff',
+            parameters => {
+                name            => 'get diff between 2 dates',
+                variable        => 'date_diff',
+                date1           => '[% date1_str %]',
+                date2           => '[% date2_str %]',
+            }
+        },
+        {
             type => 'SSH',
             parameters => {
                 name       => 'ls via SSH',

@@ -10,7 +10,7 @@ extends 'EPPlication::Web::Form::Step::Base';
 with
     'EPPlication::Web::Role::Form::Step::ValidateXML',
     'EPPlication::Web::Role::Form::Step::ValidateJSON',
-    TextArea( name => 'body',          json_edit => 1, rows => 1 ),
+    TextArea( name => 'body',          json_edit => 1, rows => 1, required => 0 ),
     Value(    name => 'method',        default => '[% http_method %]' ),
     'EPPlication::Web::Role::Form::Step::Path',
     Value(    name => 'port',          default => '[% http_port %]' ),

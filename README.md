@@ -29,7 +29,11 @@ Pull docker image from hub.docker.com and run it
 `docker-compose up`
 
 Build docker image and run it  
-`docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
+```
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --build-arg CONTAINER_UID=`id -u` app
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+```
 
 webinterface
 > http://localhost:8080  

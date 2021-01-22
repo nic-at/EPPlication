@@ -14,7 +14,10 @@ has 'ua' => (
 );
 sub _build_ua {
     my ($self) = @_;
-    return HTTP::Tiny->new( @{ $self->ua_options } );
+    return HTTP::Tiny->new(
+        keep_alive => 1, # https://github.com/chansen/p5-http-tiny/pull/117
+        @{ $self->ua_options },
+    );
 }
 has 'ua_options' => (
     is        => 'ro',

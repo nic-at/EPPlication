@@ -15,7 +15,7 @@ sub validate_method {
     my $v = $field->value;
 
     return if ($v =~ m/^\[%.*%\]$/xms);
-    return if ( any { $_ eq $v } qw/GET POST PUT DELETE HEAD OPTIONS/ );
+    return if ( any { $_ eq $v } qw/GET POST PUT PATCH DELETE HEAD OPTIONS/ );
     $field->push_errors("Invalid method ($v)\n");
 }
 

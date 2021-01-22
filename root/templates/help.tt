@@ -355,7 +355,7 @@ successfully</code><br>Variable:
       <td>
         Variable: <code>date_later</code><br/>
         Date: <code>2013-06-17T06:54:39.102245Z | now()</code><br/>
-        Duration: <code>1 year | 3 months | 7 days | 1 hour | 25 minutes | 10 seconds</code><br/>
+        Duration: <code>1 year | 3 months | 7 days | 1 hour | 25 minutes | 10 seconds | 2 years, 5 months | 7 hours, 12 minutes, 8 seconds</code><br/>
       </td>
     </tr>
     <tr>
@@ -377,6 +377,15 @@ successfully</code><br>Variable:
       </td>
     </tr>
     <tr>
+    <tr>
+      <td>DateDiff</td>
+      <td>Get difference between two dates.</td>
+      <td>
+        Variable: <code>diff</code><br/>
+        Date1: <code>2013-06-17T06:54:39.102245Z</code><br/>
+        Date2: <code>2014-06-18T06:54:39.102245Z | now()</code><br/>
+      </td>
+    </tr>
       <td>SSH</td>
       <td>
         Execute a command on a remote host<br/>

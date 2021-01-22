@@ -90,6 +90,9 @@
             case 'DateFormat':
                 self.details_text = json.variable + ' => ' + json.date + ' (' + json.date_format_str + ')';
                 break;
+            case 'DateDiff':
+                self.details_text = json.variable + ' => ' + json.date2 + ' - ' + json.date1;
+                break;
             case 'VarRand':
                 self.details_text = json.variable + ' => ' + json.rand;
                 break;
@@ -159,11 +162,11 @@
         self.test_id    = sortable.data('testid');
         self.test_name  = ko.observable(sortable.data('testname'));
         self.new_test_name = ko.observable(self.test_name());
-        document.title  = self.test_name();
+        document.title  = '(T) ' + self.test_name();
         self.loaded     = false;
 
         self.test_name.subscribe(function(new_test_name) {
-            document.title = new_test_name;
+            document.title = '(T) ' + new_test_name;
         });
         self.custom_index = function(step, index) {
                     var ret = '';

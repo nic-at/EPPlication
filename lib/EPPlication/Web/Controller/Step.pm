@@ -54,7 +54,7 @@ sub select : Chained('/step/base') Args(0) {
         [qw/ SubTest ForLoop /],
         [qw/ Comment PrintVars ClearVars /],
         [qw/ Math Transformation /],
-        [qw/ DateAdd DateCheck DateFormat /],
+        [qw/ DateAdd DateCheck DateFormat DateDiff /],
         [qw/ VarCheck VarCheckRegExp DataCmp Diff /],
         [qw/ VarVal VarRand Multiline/],
         [qw/ VarQueryPath CountQueryPath /],
