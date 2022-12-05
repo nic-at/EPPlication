@@ -99,7 +99,7 @@ sub index_POST {
     };
 }
 
-sub item : Chained('base') PathPart('') ActionClass('REST') Args(1) {
+sub item_base : Chained('base') PathPart('') CaptureArgs(1) {
     my ( $self, $c, $job_id ) = @_;
     $c->detach(
         $c->controller('API::Root')->action_for('error'),
@@ -117,6 +117,7 @@ sub item : Chained('base') PathPart('') ActionClass('REST') Args(1) {
         $c->stash(job => $job);
     }
 }
+sub item : Chained('item_base') PathPart('') ActionClass('REST') Args(0) {}
 sub item_GET {
     my ( $self, $c, $job_id ) = @_;
     my $job = $c->stash->{job};
@@ -136,6 +137,25 @@ sub item_DELETE {
         $c,
         entity => {},
     );
+}
+
+sub item_abort : Chained('item_base') PathPart('abort') ActionClass('REST') Args(0) {}
+sub item_abort_POST {
+    my ( $self, $c ) = @_;
+    my $job = $c->stash->{job};
+    if ($job->status eq 'in_progress') {
+        $job->update({ status => 'aborting' });
+        $self->status_ok(
+            $c,
+            entity => { msg => 'aborting' },
+        );
+    }
+    else {
+        $self->status_bad_request(
+            $c,
+            message => 'not aborting, task status not "in_progress"',
+        );
+    }
 }
 
 sub export : Chained('base') PathPart('export') ActionClass('REST') Args(0) {}

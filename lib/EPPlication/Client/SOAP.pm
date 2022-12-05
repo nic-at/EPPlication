@@ -5,21 +5,6 @@ use Encode qw/ encode_utf8 /;
 use MooseX::Types::Common::String qw/ NonEmptySimpleStr /;
 extends 'EPPlication::HTTP::UA';
 
-around BUILDARGS => sub {
-    my $orig  = shift;
-    my $class = shift;
-
-    return $class->$orig(
-        ua_options => [
-            default_headers => {
-                'Content-Type' => 'application/xml; charset=utf-8',
-                'SOAPAction'   => 'urn:Registry::App::SOAP#command',
-            },
-        ],
-        @_
-    );
-};
-
 has 'path' => (
     is        => 'rw',
     isa       => NonEmptySimpleStr,
@@ -32,7 +17,7 @@ sub url {
 }
 
 sub request {
-    my ($self, $method, $content) = @_;
+    my ($self, $method, $headers, $content) = @_;
 
     for my $attr (qw/ host port path /) {
         my $predicate = "has_$attr";
@@ -44,14 +29,17 @@ sub request {
     # percent encoded bytes. e.g.: ä => %C3%A4
     my $uri = URI->new(encode_utf8($self->url));
 
-    my $content_utf8 = encode_utf8($content);
-    my $response = $self->ua->request(
+    if ( defined $content ) {
+        $content = encode_utf8($content);
+    }
+
+    my $request = HTTP::Request->new(
         $method,
         $uri->as_string,
-        { content => $content_utf8 },
+        $headers,
+        $content,
     );
-
-    $self->process_utf8_header($response);
+    my $response =  $self->ua->request( $request );
 
     return $response;
 }

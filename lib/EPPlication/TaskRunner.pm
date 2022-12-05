@@ -16,14 +16,15 @@ my $config               = EPPlication::Util::Config->get;
 my $schema               = EPPlication::Util::get_schema();
 my $interval             = $config->{TaskRunner}{interval};
 my $maintenance_interval = $config->{TaskRunner}{maintenance_interval};
+my $abort_interval       = $config->{TaskRunner}{abort_interval};
 my $max_procs            = $config->{TaskRunner}{max_procs};
 my $temp_job_retention   = $config->{TaskRunner}{temp_job_retention};
 my $test_job_retention   = $config->{TaskRunner}{test_job_retention};
 my $job_export_retention = $config->{TaskRunner}{job_export_retention};
 my $job_export_dir       = $config->{'Model::DB'}{job_export_dir};
-my $procs                = {};
-my $maintenance          = 0; # indicates if maintenance task are run.
-my $count                = 0; # helps keep track of time until next maintenance.
+my @procs                = ();
+my $maintenance_time     = time;
+my $abort_time           = 0;
 
 # signal handler to forward signal to child processes
 $SIG{TERM} = \&shutdown;
@@ -31,36 +32,54 @@ $SIG{INT}  = \&shutdown;
 sub shutdown {
     my ($signal) = @_;
     $log->info("Shutting down TaskRunner and all running tasks.");
-    for my $proc ( values %$procs ) {
-        $log->info(
-            "Sending signal ($signal) to child. (PID: " . $proc->pid . ")" );
-        $proc->kill($signal);
-    }
+    for my $proc ( @procs ) { abort_job($signal, $proc); }
     exit;
+}
+
+sub abort_job {
+    my ($signal, $proc) = @_;
+    my $job_id = $proc->{job_id};
+    my $job = $schema->resultset('Job')->find($job_id);
+    $job->update({ status => 'aborted' });
+    $log->info( "Abort Job. Sending signal ($signal) to child. (PID: " . $proc->{proc}->pid . ", job_id: $job_id)" );
+    $proc->{proc}->kill($signal);
 }
 
 sub start_proc {
     my ($sub) = @_;
     my $child = Child->new($sub);
     my $proc = $child->start;
-    $procs->{ $proc->pid } = $proc;
+    return $proc;
 }
 
 sub process_task {
     my $task   = shift;
     my $job    = $task->{job};
+    my $job_id = $job->id;
     my $action = $task->{action};
-    if ( $action eq 'run' ) {
+    if ( $action eq 'abort' ) {
+        my ($proc) = grep { $_->{job_id} == $job_id } @procs;
+        if ($proc) {
+            my $signal = 'TERM';
+            abort_job($signal, $proc);
+        }
+        else {
+            $job->update({ status  => 'abort_error' });
+            $log->info( "Failed to abort Job. Process not found. (job_id: $job_id )" );
+        }
+    }
+    elsif ( $action eq 'run' ) {
         $job->update({ status => 'in_progress' });
         my $sub = sub {
             local $SIG{INT} = sub {
                 my ($signal) = @_;
+                $job->update({ status => 'aborted' });
                 $log->info("Received $signal signal. Aborting Task.");
                 exit;
             };
 
             # fix same seed problem after forking
-            srand;    # (semi-)randomly choose a seed
+            srand; # (semi-)randomly choose a seed
 
             try {
                 my $test_env = EPPlication::Util::get_test_env($schema);
@@ -68,7 +87,7 @@ sub process_task {
             }
             catch {
                 my $e = shift;
-                $log->error( "$e (job_id: " . $job->id . ')' );
+                $log->error( "$e (job_id: $job_id)" );
                 my $comment = defined $job->comment ? $job->comment : '';
                 $job->update(
                     {
@@ -78,7 +97,8 @@ sub process_task {
                 );
             };
         };
-        start_proc($sub);
+        my $proc = start_proc($sub);
+        push(@procs, { job_id => $job_id, proc => $proc });
     }
     elsif ( $action eq 'export' ) {
         $job->update({ status => 'exporting' });
@@ -94,7 +114,7 @@ sub process_task {
             }
             catch {
                 my $e = shift;
-                $log->error( "$e (job_id: " . $job->id . ')' );
+                $log->error( "$e (job_id: $job_id)" );
                 my $comment = defined $job->comment ? $job->comment : '';
                 $job->update(
                     {
@@ -109,7 +129,7 @@ sub process_task {
     elsif ( $action eq 'delete' ) {
         try {
             $job->update({ status => 'deleting' });
-            $log->info( 'Deleting job ' . $job->id );
+            $log->info( "Deleting job (job_id: $job_id)" );
             $job->delete;
         }
         catch {
@@ -125,26 +145,30 @@ sub process_task {
 sub start {
     $log->info("Starting TaskRunner");
     while (1) {
-        if ( free_procs() ) {
-            my $task = get_task($schema);
+        if ((time - $abort_time) > $abort_interval) {
+            my $task = get_abort_task();
             if ($task) {
                 process_task($task);
                 next;
             }
-            # run maintenance once every hour
-            if (
-                   !$maintenance
-                && $count * $interval > $maintenance_interval
-                && maintenance_proc_available()
-            ) {
-                $count       = 0;
-                $maintenance = 1;
-                $log->info('Start maintenance.');
+        }
+        if ( free_procs() ) {
+            my $task = get_task();
+            if ($task) {
+                process_task($task);
+                next;
+            }
+
+            if ((time - $maintenance_time) > $maintenance_interval) {
+                my $task = get_maintenance_task();
+                if ($task) {
+                    process_task($task);
+                    next;
+                }
             }
         }
         sleep $interval;
-        $count++;
-        update_procs($procs);
+        update_procs();
     }
 }
 
@@ -158,28 +182,27 @@ sub maintenance_proc_available {
 }
 
 sub free_procs {
-    return $max_procs - scalar keys %$procs;
+    return $max_procs - scalar @procs;
 }
 
 sub update_procs {
-    my ($procs) = @_;
-    for my $pid ( keys %$procs ) {
-        delete $procs->{$pid}
-          if $procs->{$pid}->is_complete;
+    @procs = grep { ! $_->{proc}->is_complete; } @procs;
+}
+
+sub get_abort_task {
+    my $job = $schema->resultset('Job')
+                     ->search({ status => 'aborting' })
+                     ->order_oldest_first->first;
+    if ($job) {
+        return { action => 'abort', job => $job };
+    }
+    else {
+        $abort_time = time;
+        return;
     }
 }
 
-sub get_task {
-    my ($schema) = @_;
-    {    # get pending jobs
-        my $job = $schema->resultset('Job')
-                         ->search({ status => 'pending' })
-                         ->order_oldest_first->first;
-        return { action => 'run', job => $job } if $job;
-    }
-
-    # look for maintenance task only if we are currently in maintenance mode
-    return if !$maintenance;
+sub get_maintenance_task {
     # dont use last available proc for maintenance tasks
     return if !maintenance_proc_available();
 
@@ -263,9 +286,17 @@ sub get_task {
         );
     }
 
-    $maintenance = 0; # no maintenance task was found, exit maintenance mode
+    $maintenance_time = time;
     $log->info('Stop maintenance.');
     return;
+}
+
+sub get_task {
+    # get pending jobs
+    my $job = $schema->resultset('Job')
+                     ->search({ status => 'pending' })
+                     ->order_oldest_first->first;
+    return { action => 'run', job => $job } if $job;
 }
 
 __PACKAGE__->meta->make_immutable;

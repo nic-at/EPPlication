@@ -60,7 +60,7 @@ my @steps = (
         name       => 'Set rest_headers_json',
         parameters => {
             variable => 'rest_headers_json',
-            value    => '{ "Accept":"application/json" }',
+            value    => '[ "Accept", "application/json" ]',
             global   => 1,
         },
     },
@@ -69,7 +69,7 @@ my @steps = (
         name       => 'Set rest_headers_csv',
         parameters => {
             variable => 'rest_headers_csv',
-            value    => '{ "Accept":"text/csv" }',
+            value    => '[ "Accept", "text/csv" ]',
             global   => 1,
         },
     },
@@ -170,26 +170,24 @@ for my $step_data (@steps) {
 
 {
     no warnings 'redefine';
-    local *HTTP::Tiny::request = sub {
-                                        my ( $self, $method, $url, $options ) = @_;
-                                        is($options->{content}, $request_utf8, "request data encoded correctly");
-                                        if (exists $options->{headers}{Accept} && $options->{headers}{Accept} =~ m!text/csv!xms) {
-                                            return {
-                                                protocol => 'HTTP/1.1',
-                                                headers  => { 'content-type' => 'text/csv; charset=utf-8' },
-                                                success  => 1,
-                                                content  => $response_csv_utf8,
-                                                status   => 200,
-                                            };
+    local *LWP::UserAgent::request = sub {
+                                        my ( $self, $request ) = @_;
+                                        is($request->content, $request_utf8, "request data encoded correctly");
+                                        if ($request->header('Accept') =~ m!text/csv!xms) {
+                                            return HTTP::Response->new(
+                                                200,
+                                                '',
+                                                ['content-type' => 'text/csv; charset=utf-8'],
+                                                $response_csv_utf8,
+                                            );
                                         }
                                         else {
-                                            return {
-                                                protocol => 'HTTP/1.1',
-                                                headers => { 'content-type' => 'application/json; charset=utf-8' },
-                                                success  => 1,
-                                                content  => $response_utf8,
-                                                status   => 200,
-                                            };
+                                            return HTTP::Response->new(
+                                                200,
+                                                '',
+                                                ['content-type' => 'application/json; charset=utf-8'],
+                                                $response_utf8,
+                                            );
                                         }
                                     };
     my $test_env = EPPlication::Util::get_test_env();

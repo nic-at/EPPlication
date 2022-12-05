@@ -4,17 +4,9 @@ use warnings;
 use EPPlication::Util::Config;
 use Log::Any::Adapter;
 use Log::Dispatch;
+use Log::Dispatch::FileRotate;
 use IO::Interactive qw/ is_interactive /;
 use POSIX qw/strftime/;
-
-# for each process you want to do logging in you have
-# to "use EPPlication::InitLogger" once.
-# each package that wants to log has to "use Log::Any qw/$log/"
-
-# logrotate sends HUP signal, re-init logger so we write to the correct file.
-$SIG{HUP} = sub { init_logger(); };
-
-my $log_entry;
 
 sub init_logger {
     my $config  = EPPlication::Util::Config::get();
@@ -25,12 +17,15 @@ sub init_logger {
     if ( defined $log_file && $log_file ) {
         push(
             @outputs,
-            [   'File',
+            [   'FileRotate',
                 name      => 'file',
                 filename  => $log_file,
                 min_level => 'debug',
                 newline   => 1,
                 mode      => 'append',
+                size      => 10*1024*1024, # 10MB
+                max       => 3,            # number of log files to create
+                                           # 3 => log.1, log.2, log.3
             ]
         );
     }
@@ -65,8 +60,8 @@ sub init_logger {
         ]
     );
 
-    Log::Any::Adapter->remove($log_entry) if $log_entry;
-    $log_entry = Log::Any::Adapter->set( 'Dispatch', dispatcher => $logger );
+    Log::Any::Adapter->set( 'Dispatch', dispatcher => $logger );
+
 }
 
 init_logger();

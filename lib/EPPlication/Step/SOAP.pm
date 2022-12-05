@@ -6,7 +6,7 @@ use Try::Tiny;
 
 with
   'EPPlication::Role::Step::Base',
-  Parameters(parameter_list => [qw/ host port path method body var_result /]),
+  Parameters(parameter_list => [qw/ host port path method body headers var_result /]),
   'EPPlication::Role::Step::Client::SOAP',
   'EPPlication::Role::Step::Util::Encode',
   ;
@@ -17,22 +17,35 @@ sub process {
     my $var_result = $self->var_result;
 
     try {
-        my $method  = $self->method;
+        my $method      = $self->method;
+        my $headers_raw = $self->headers;
+        my $headers     = $self->process_template($headers_raw);
 
         for my $config (qw/ host port path /) {
             my $value_raw = $self->$config;
             my $value     = $self->process_template($value_raw);
             $self->soap_client->$config($value);
         }
-        $self->add_detail($method . ' ' . $self->soap_client->url);
 
-        $self->add_detail("Variable: $var_result");
+        $self->add_detail("$var_result => $method " . $self->soap_client->url);
+        $self->add_detail("headers => $headers");
+
         my $xml = $self->process_tt_value( 'Request XML', $self->body, { before => "\n", between => ":\n" } );
 
-        my $response = $self->soap_client->request($method, $xml);
-	die $self->pl2str($response) unless $response->{success};
+        if ($headers) {
+            try {
+                $headers = $self->json2pl($headers);
+            }
+            catch {
+                my $e = shift;
+                die "could not parse headers. ($e)";
+            };
+        }
 
-        my $response_xml = $self->str2xml_str( $response->{content} );
+        my $response = $self->soap_client->request($method, $headers, $xml);
+	die $response->as_string unless $response->is_success;
+
+        my $response_xml = $self->str2xml_str( $response->decoded_content );
         $self->add_detail( "\nResponse XML:\n$response_xml" );
         my $response_pl   = $self->xml2pl($response_xml);
         my $response_json = $self->pl2json($response_pl);

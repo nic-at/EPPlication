@@ -1,3 +1,14 @@
+1.0.10  30.11.2022
+    - don't show dualvar values
+    - show response status_line if request fails
+    - replace Net::SSH2 with Net::OpenSSH
+    - update perl dependencies
+
+1.0.9  04.08.2021
+    - replace HTTP::Tiny with LWP::UserAgent
+    - make SOAP request headers editable
+    - button to abort running jobs
+
 1.0.8  18.12.2020
     - dont reuse http connections
     - new step DateDiff

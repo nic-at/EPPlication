@@ -214,6 +214,10 @@ my @tests = (
             parameters => {
                 method       => 'POST',
                 name         => 'send SOAP frame',
+                headers       => '{
+                                    "Content-Type" => "application/xml; charset=utf-8",
+                                    "SOAPAction"   => "urn:Registry::App::SOAP#command",
+                                  }',
                 var_result   => 'soap_response',
                 body         => '<xml>foo</xml>',
                 validate_xml => 1,
@@ -580,6 +584,10 @@ my @tests = (
             parameters => {
                 name         => 'send invalid SOAP frame again',
                 body         => 'soap_asdf',
+                headers      => '{
+                                   "Content-Type" => "application/xml; charset=utf-8",
+                                   "SOAPAction"   => "urn:Registry::App::SOAP#command",
+                                 }',
                 var_result   => 'soap_response2',
                 validate_xml => 1,
             },

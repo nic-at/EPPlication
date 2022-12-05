@@ -118,7 +118,7 @@
                 break;
             case 'ForLoop':
                 self.details_html = epplication.add_modal(self.name, '', '/branch/' + branch_id + '/test/' + json.subtest_id + '/details')
-                          + ' <a href="/test/' + json.subtest_id + '/show">' + json.subtest_name + '</a>'
+                          + ' <a href="/branch/' + branch_id + '/test/' + json.subtest_id + '/show">' + json.subtest_name + '</a>'
                 self.details_text = '(' + json.variable + ')';
                 break;
             case 'Comment':

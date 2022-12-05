@@ -81,8 +81,8 @@ for ( $job->step_results->default_order->all ) {
             # Data::DPath returns multiple results in unpredictable order.
             # ["a","b","c"],["d","e","f"] OR ["d","e","f"],["a","b","c"]
             my $two_array_refs = $1;
-            like($two_array_refs, qr/\["a","b","c"\]/xms, 'bazes contains a,b,c');
-            like($two_array_refs, qr/\["d","e","f"\]/xms, 'bazes contains d,e,f');
+            like($two_array_refs, qr/\[\\"a\\",\\"b\\",\\"c\\"\]/xms, 'bazes contains a,b,c');
+            like($two_array_refs, qr/\[\\"d\\",\\"e\\",\\"f\\"\]/xms, 'bazes contains d,e,f');
         }
         else {
             fail('PrintVars did not contain bazes result in correct format.');

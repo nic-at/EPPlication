@@ -1,7 +1,9 @@
 package EPPlication::CLI;
 use Moose;
 use namespace::autoclean;
-use HTTP::CookieJar;
+use HTTP::CookieJar::LWP;
+use HTTP::Headers;
+use HTTP::Request;
 use JSON::PP;
 use URI;
 use URI::QueryParam;
@@ -32,14 +34,14 @@ around BUILDARGS => sub {
     my $timeout = delete $args{timeout};
 
     return $class->$orig(
-        ua_options => [
+        ua_options => {
             ( defined $timeout ? ( timeout => $timeout ) : () ),
-            cookie_jar      => HTTP::CookieJar->new,
-            default_headers => {
+            cookie_jar      => HTTP::CookieJar::LWP->new,
+            default_headers => HTTP::Headers->new(
                 'Accept'       => 'application/json',
                 'Content-Type' => 'application/json; charset=utf-8',
-            },
-        ],
+            ),
+        },
         @_
     );
 };
@@ -54,13 +56,10 @@ sub login {
     my ( $self, $username, $password ) = @_;
 
     my $content_raw = encode_json({ name => $username, password => $password });
+    my $req = HTTP::Request->new('POST', $self->api_base . '/login', undef, $content_raw);
+    my $res = $self->ua->request($req);
 
-    my $res = $self->ua->post(
-        $self->api_base . '/login',
-        { content => $content_raw },
-    );
-
-    my $status = $res->{status};
+    my $status = $res->code;
 
     # login successful
     if ( $status == 200 ) {
@@ -72,7 +71,7 @@ sub login {
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -88,9 +87,7 @@ sub logout {
     my $res = $self->ua->post(
         $self->api_base . '/logout',
     );
-    return $res->{status} eq '200'
-      ? 1
-      : 0;
+    return $res->is_success;
 }
 
 =head2 $job_id = create_job(\%params)
@@ -107,28 +104,25 @@ sub create_job {
 
     $params->{job_type} = 'test';
     my $content_raw = encode_json($params);
+    my $req = HTTP::Request->new('POST', $self->api_base . '/job', undef, $content_raw);
+    my $res = $self->ua->request($req);
 
-    my $res = $self->ua->post(
-        $self->api_base . '/job',
-        { content => $content_raw },
-    );
-
-    my $status = $res->{status};
+    my $status = $res->code;
     # job created
     if ( $status == 201 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         return $content->{job_id};
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -161,10 +155,10 @@ sub get_job {
 
     my $res = $self->ua->get($uri);
 
-    my $status = $res->{status};
+    my $status = $res->code;
     # job found
     if ( $status == 200 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         return $content;
     }
@@ -174,13 +168,13 @@ sub get_job {
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -195,15 +189,14 @@ sub export_job {
     my ( $self, $job_id ) = @_;
 
     my $content_raw = encode_json({ job_id => $job_id });
-    my $res = $self->ua->post(
-        $self->api_base . '/job/export',
-        { content => $content_raw },
-    );
+    my $req = HTTP::Request->new('POST', $self->api_base . '/job/export', undef, $content_raw);
+    my $res = $self->ua->request($req);
 
-    my $status = $res->{status};
+    my $status = $res->code;
     # job has been exported
     if ( $status == 201 ) {
-        return $res->{headers}{location};
+        my $h = $res->header('location');
+        return $h;
     }
     # no job found
     elsif ( $status == 404 ) {
@@ -211,13 +204,13 @@ sub export_job {
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -233,32 +226,29 @@ sub download_job_report {
         if -x $filename;
     open( my $fh, '>', $filename )
       or die "Could not open file for writing. ($!)";
+
     my $res = $self->ua->get(
         $location,
-        {
-            data_callback => sub {
-                my ($chunk, $res) = @_;
-                print $fh $chunk;
-            }
+	':content_cb' => sub {
+            my ($chunk, $res) = @_;
+            print $fh $chunk;
         },
     );
 
-    my $status = $res->{status};
+    my $status = $res->code;
     # job has been exported
     if ( $status == 200 ) {
-        if ($res->{url} =~ m/login/xms) {
-            die 'Not logged in.';
-        }
+        return 1;
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 
 }
@@ -281,11 +271,11 @@ sub get_branch_id_by_name {
 
     my $res = $self->ua->get($uri);
 
-    my $status = $res->{status};
+    my $status = $res->code;
 
     # test found
     if ( $status == 200 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         return $content->{branch_id};
     }
@@ -295,13 +285,13 @@ sub get_branch_id_by_name {
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -326,10 +316,10 @@ sub get_test_id_by_name {
 
     my $res = $self->ua->get($uri);
 
-    my $status = $res->{status};
+    my $status = $res->code;
     # test found
     if ( $status == 200 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         return $content->{test_id};
     }
@@ -339,13 +329,13 @@ sub get_test_id_by_name {
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 
@@ -370,22 +360,22 @@ sub get_version {
 
     my $res = $self->ua->get($uri);
 
-    my $status = $res->{status};
+    my $status = $res->code;
     # job found
     if ( $status == 200 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         return $content;
     }
     # error caught on server side
     elsif ( $status == 400 or $status == 403 ) {
-        my $content_raw = $res->{content};
+        my $content_raw = $res->decoded_content(charset => 'none');
         my $content     = decode_json($content_raw);
         die $content->{error} . "\n";
     }
     # unknown error
     else {
-        die "Unknown Status ($status)";
+        die "Unknown Status (".$res->status_line.")";
     }
 }
 

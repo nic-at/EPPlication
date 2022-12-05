@@ -32,24 +32,20 @@ sub http_request {
     $self->add_detail("check_success => $check_success");
     my $body = $self->process_tt_value( 'Body', $self->body, { between => ":\n", after => "\n" } );
 
-    try {
-        if ($headers) {
+    if ($headers) {
+        try {
             $headers = $self->json2pl($headers);
         }
-        else {
-            undef $headers;
-        }
+        catch {
+            my $e = shift;
+            die "Could not parse headers. ($e)";
+        };
     }
-    catch {
-        my $e = shift;
-        die "Could not parse headers. ($e)";
-    };
 
     my $response = $self->http_client->request( $method, $path, $headers, $body );
 
-    if ($check_success) {
-        die $self->pl2str($response) . "\n"
-          unless $response->{success};
+    if ($check_success && !$response->is_success) {
+        die $response->as_string . "\n";
     }
 
     return $response;
@@ -64,8 +60,8 @@ sub process {
     try {
         my $response = $self->http_request();
 
-        $self->add_detail( "Status: $response->{status}" );
-        $self->stash_set( $var_status => $response->{status} );
+        $self->add_detail( "Status: " . $response->code );
+        $self->stash_set( $var_status => $response->code );
 
         $self->decode_content($response, $var_result);
 

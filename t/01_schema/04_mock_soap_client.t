@@ -99,6 +99,10 @@ my @steps = (
             port         => '[% soap_port %]',
             path         => '[% soap_path %]',
             method       => 'POST',
+            headers      => '[
+                               "Content-Type", "application/xml; charset=utf-8",
+                               "SOAPAction", "urn:Registry::App::SOAP#command"
+                             ]',
             var_result   => 'soap_response__',
             body         => $request,
             validate_xml => 1,
@@ -130,17 +134,16 @@ for my $step_data (@steps) {
 
 {
     no warnings 'redefine';
-    local *HTTP::Tiny::request = sub {
-                                     my ( $self, $method, $url, $args ) = @_;
-                                     is($args->{content}, $request_utf8, "request data encoded correctly");
-                                     return {
-                                         protocol => 'HTTP/1.1',
-                                         headers => { 'content-type' => 'application/xml; charset=utf-8' },
-                                         success  => 1,
-                                         content  => $response_utf8,
-                                         status   => 200,
-                                     };
-                                 };
+    local *LWP::UserAgent::request = sub {
+                                        my ( $self, $request ) = @_;
+                                        is($request->content, $request_utf8, "request data encoded correctly");
+                                        return HTTP::Response->new(
+                                            200,
+                                            '',
+                                            ['content-type' => 'application/xml; charset=utf-8'],
+                                            $response_utf8,
+                                        );
+                                    };
     my $test_env = EPPlication::Util::get_test_env();
     my $stats    = $job->run($test_env);
     ok(!$stats->{errors}, 'no errors');

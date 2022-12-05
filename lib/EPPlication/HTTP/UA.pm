@@ -2,27 +2,26 @@ package EPPlication::HTTP::UA;
 use Moose;
 use namespace::autoclean;
 use MooseX::Types::Common::String qw/ NumericCode NonEmptySimpleStr /;
-use HTTP::Tiny;
+use LWP::UserAgent qw//;
+use HTTP::Request;
 use Encode qw/ decode_utf8 /;
 
 has 'ua' => (
     is       => 'ro',
-    isa      => 'HTTP::Tiny',
+    isa      => 'LWP::UserAgent',
     lazy     => 1,
     builder  => '_build_ua',
     init_arg => undef,
 );
 sub _build_ua {
     my ($self) = @_;
-    return HTTP::Tiny->new(
-        keep_alive => 1, # https://github.com/chansen/p5-http-tiny/pull/117
-        @{ $self->ua_options },
+    return LWP::UserAgent->new( ssl_opts => {verify_hostname => 0}, %{ $self->ua_options },
     );
 }
 has 'ua_options' => (
     is        => 'ro',
-    isa       => 'ArrayRef',
-    default   => sub { [] },
+    isa       => 'HashRef',
+    default   => sub { {} },
 );
 has 'host' => (
     is        => 'rw',
@@ -56,18 +55,6 @@ has 'api_base' => (
 sub _build_api_base {
     my ($self) = @_;
     return $self->url_base . '/api';
-}
-
-sub process_utf8_header {
-    my ( $self, $response ) = @_;
-    if ( exists $response->{headers}{'content-type'} ) {
-        my $content_type = lc( $response->{headers}{'content-type'} );
-        if (    $content_type =~ m/charset=utf-8/xms
-             || $content_type =~ m/application\/json/xms
-        ) {
-            $response->{content} = decode_utf8( $response->{content} );
-        }
-    }
 }
 
 __PACKAGE__->meta->make_immutable;

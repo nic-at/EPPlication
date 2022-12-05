@@ -65,7 +65,7 @@ for my $result ($job->step_results->default_order->all) {
     }
     elsif ( $result->type eq 'SSH' ) {
         is($result->status, "error", "Step '" . $result->name. "' result status is 'error'");
-        like($result->details, qr/LIBSSH2_ERROR_PUBLICKEY_UNRECOGNIZED/, "Authentication error found.");
+        like($result->details, qr/Couldn't\ establish\ SSH\ connection:\ unable\ to\ establish\ master\ SSH\ connection:\ master\ process\ exited\ unexpectedly/, "Authentication error found.");
     }
     else {
         is($result->status, "ok", "Step '" . $result->name. "' result status is 'ok'");

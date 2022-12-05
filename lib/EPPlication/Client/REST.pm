@@ -29,22 +29,17 @@ sub request {
     # percent encoded bytes. e.g.: ä => %C3%A4
     my $uri = URI->new(encode_utf8($self->url . $path));
 
-    my %options;
     if ( defined $content ) {
-        my $content_utf8 = encode_utf8($content);
-        $options{content} = $content_utf8;
-    }
-    if ( defined $headers ) {
-        $options{headers} = $headers;
+        $content = encode_utf8($content);
     }
 
-    my $response =  $self->ua->request(
+    my $request = HTTP::Request->new(
         $method,
         $uri->as_string,
-        \%options,
+        $headers,
+        $content,
     );
-
-    $self->process_utf8_header($response);
+    my $response =  $self->ua->request( $request );
 
     return $response;
 }

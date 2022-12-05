@@ -57,6 +57,9 @@
             <a class="btn btn-default btn-xs" data-bind="click: function(){$parent.deleteJob($data)}" title="Delete">
               <i class="glyphicon glyphicon-trash"></i>
             </a>
+            <a class="btn btn-default btn-xs" data-bind="click: function(){$parent.abortJob($data)}" title="Abort">
+              <i class="glyphicon glyphicon-ban-circle"></i>
+            </a>
         </div>
       </td>
     </tr>

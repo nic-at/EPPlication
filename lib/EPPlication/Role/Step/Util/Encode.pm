@@ -15,6 +15,7 @@ use Data::Printer {
     hash_separator => ' => ',
     index          => 0,
     colored        => 0,
+    show_dualvar   => 'off',
 };
 
 sub str2xml_str {

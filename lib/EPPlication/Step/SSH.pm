@@ -1,7 +1,7 @@
 package EPPlication::Step::SSH;
 
 use Moose;
-use Net::SSH2;
+use Net::OpenSSH;
 use EPPlication::Role::Step::Parameters;
 use Encode qw/ decode_utf8 encode_utf8 /;
 
@@ -34,20 +34,22 @@ sub process {
     my $ssh_port = $self->process_tt_value( 'SSH Port', $self->ssh_port );
     my $ssh_user = $self->process_tt_value( 'SSH User', $self->ssh_user );
 
-    my $ssh = Net::SSH2->new(timeout => 10*1000); # 10 seconds
+    my $ssh = Net::OpenSSH->new(
+              $ssh_host,
+              user     => $ssh_user,
+              port     => $ssh_port,
+              key_path => $self->ssh_private_key_path->stringify,
+              timeout  => 10, # 10 seconds
+    );
 
-    $ssh->connect($ssh_host, $ssh_port)
-      or $ssh->die_with_error;
+    if ($ssh->error) {
+        die "Couldn't establish SSH connection: ". $ssh->error;
+    }
 
-    $ssh->auth_publickey(
-        $ssh_user,
-        $self->ssh_public_key_path->stringify,
-        $self->ssh_private_key_path->stringify,
-    ) or $ssh->die_with_error;
-
-    my ($stdout, $stderr) = exec_command($ssh, encode_utf8($command));
-    $stdout = decode_utf8($stdout);
-    $stderr = decode_utf8($stderr);
+    my ($stdout, $stderr) = $ssh->capture2($command);
+    #my ($stdout, $stderr) = exec_command($ssh, encode_utf8($command));
+    #$stdout = decode_utf8($stdout);
+    #$stderr = decode_utf8($stderr);
     $self->add_detail("\n" . $stdout);
 
     die $stderr if $stderr;
@@ -55,27 +57,6 @@ sub process {
     $self->stash_set( $var_stdout => $stdout );
 
     return $self->result;
-}
-
-sub exec_command {
-    my ($ssh, $command) = @_;
-
-    $ssh->blocking(1);
-    my $chan = $ssh->channel();
-    $chan->exec($command) or die "Couldn't execute command. ($command)";
-    $ssh->blocking(0);
-
-    my $stdout = '';
-    my $stderr = '';
-    my @poll = { handle => $chan, events => [qw/in err/] };
-
-    while (1) {
-        $ssh->poll( 250, \@poll );
-        while ( $chan->read( my $chunk, 80 ) ) { $stdout .= $chunk; }
-        while ( $chan->read( my $chunk, 80, 1 ) ) { $stderr .= $chunk; }
-        last if $chan->eof;
-    }
-    return ($stdout, $stderr);
 }
 
 __PACKAGE__->meta->make_immutable;

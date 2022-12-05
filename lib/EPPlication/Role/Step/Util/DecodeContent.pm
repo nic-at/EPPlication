@@ -1,32 +1,32 @@
 package EPPlication::Role::Step::Util::DecodeContent;
 use Moose::Role;
 
+use Encode qw/ decode_utf8 /;
 use Try::Tiny;
 with 'EPPlication::Role::Step::Util::Encode';
 
 sub decode_content {
     my ( $self, $response, $var_result ) = @_;
-    if ( $response->{content} eq '' ) {
+
+    my $content = $response->decoded_content(charset => 'none');
+    if ($response->content_charset eq 'UTF-8') {
+        $content = decode_utf8( $content );
+    }
+
+    if ( $content eq '' ) {
         $self->stash_set( $var_result => '' );
         $self->add_detail("Response content was empty.");
     }
-    elsif ( exists $response->{headers}{'content-type'} ) {
-        my $content_type = lc( $response->{headers}{'content-type'} );
+    elsif ( $response->header('content-type') ) {
+        my $content_type = lc( $response->header('content-type') );
         if ( $content_type =~ m!application/(?:\w+\+)?json!xms ) {
 
             # JSON
-            my $response_json = $response->{content};
-            $self->stash_set( $var_result => $response_json );
-            $self->add_detail("Response JSON:\n$response_json");
-            my $response_pl = $self->json2pl($response_json);
+            $self->stash_set( $var_result => $content );
+            $self->add_detail("Response JSON:\n$content");
+            my $content_pl = $self->json2pl($content);
             $self->add_detail(
-                "Response PL:\n" . $self->pl2str($response_pl) );
-        }
-        elsif ( $content_type =~ m!text/plain!xms ) {
-
-            # PLAIN
-            my $response = $response->{content};
-            $self->stash_set( $var_result => $response );
+                "Response PL:\n" . $self->pl2str($content_pl) );
         }
         elsif ( $content_type =~ m!text/csv!xms ) {
 
@@ -38,17 +38,17 @@ sub decode_content {
             $self->add_detail("quote_char: 0x$quote_char_hex");
             my $quote_char = chr( hex($quote_char_hex) );
 
-            my $response_csv = $response->{content};
-            $self->add_detail("\nResponse CSV:\n$response_csv");
-            my $response_pl
-                = $self->csv2pl( $response_csv, $sep_char, $quote_char );
-            my $response_json = $self->pl2json($response_pl);
-            $self->stash_set( $var_result => $response_json );
+            $self->add_detail("\nResponse CSV:\n$content");
+            my $content_pl
+                = $self->csv2pl( $content, $sep_char, $quote_char );
+            my $content_json = $self->pl2json($content_pl);
+            $self->stash_set( $var_result => $content_json );
             $self->add_detail(
-                "Response PL:\n" . $self->pl2str($response_pl) );
+                "Response PL:\n" . $self->pl2str($content_pl) );
         }
         else {
-            die "Unknown content-type. ('$content_type')\n";
+            $self->stash_set( $var_result => $content );
+            $self->add_detail( "Response Content:\n" . $content );
         }
     }
 }

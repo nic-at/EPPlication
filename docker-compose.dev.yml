@@ -1,4 +1,17 @@
-version: '3'
+version: '3.6'
 services:
     app:
         build: .
+        volumes:
+            - type: bind
+              source: ./lib/
+              target: /home/epplication/EPPlication/lib
+            - type: bind
+              source: ./root/
+              target: /home/epplication/EPPlication/root
+            - type: bind
+              source: ./script/
+              target: /home/epplication/EPPlication/script
+            - type: bind
+              source: ./t/
+              target: /home/epplication/EPPlication/t

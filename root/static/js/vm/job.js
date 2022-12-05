@@ -37,6 +37,12 @@
         else if (data.status === 'finished') {
             self.status_class = 'btn btn-xs btn-default btn-success reset-pointer';
         }
+        else if (data.status === 'aborting'
+              || data.status === 'aborted'
+              || data.status === 'abort_error'
+        ) {
+            self.status_class = 'btn btn-xs btn-default btn-danger reset-pointer';
+        }
         self.show_url = data.show_url;
         self.edit_url = data.edit_url;
     }
@@ -56,6 +62,18 @@
                 method: 'DELETE',
                 success: function() {
                             self.jobs.remove(job);
+                }
+            });
+        };
+        self.abortJob = function(job) {
+            if (!confirm("Are you sure you want to abort this job?")) {
+                return;
+            }
+            $.ajax({
+                url: '/api/job/' + job.id + '/abort',
+                method: 'POST',
+                success: function() {
+                            self.load();
                 }
             });
         };

@@ -13,6 +13,7 @@ with
     Value(    name => 'path',       default => '[% soap_path %]' ),
     Value(    name => 'port',       default => '[% soap_port %]' ),
     Value(    name => 'host',       default => '[% soap_host %]' ),
+    Value(    name => 'headers',    default => '[% soap_headers_default %]' ),
     ;
 
 1;

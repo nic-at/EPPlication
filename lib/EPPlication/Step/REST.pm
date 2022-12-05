@@ -29,30 +29,23 @@ sub rest_request {
         $self->rest_client->$config($value);
     }
 
-    $self->add_detail("check_success => $check_success");
-    $self->add_detail("headers => $headers");
     $self->add_detail("$var_result => $method " . $self->rest_client->config_str . $path . "\n");
+    $self->add_detail("headers => $headers");
+    $self->add_detail("check_success => $check_success");
+
     my $body = $self->process_tt_value( 'JSON', $self->body, { between => ":\n", after => "\n" } );
 
-    try {
-        if ($headers) {
+    if ($headers) {
+        try {
             $headers = $self->json2pl($headers);
         }
-        else {
-            undef $headers;
-        }
+        catch {
+            my $e = shift;
+            die "could not parse headers. ($e)";
+        };
     }
-    catch {
-        my $e = shift;
-        die "Could not parse headers. ($e)";
-    };
 
     my $response = $self->rest_client->request( $method, $path, $headers, $body );
-
-    if ($check_success) {
-        die $self->pl2str($response) . "\n"
-          unless $response->{success};
-    }
 
     return $response;
 }
@@ -60,16 +53,23 @@ sub rest_request {
 sub process {
     my ($self) = @_;
 
-    my $var_result = $self->var_result;
-    my $var_status = $self->var_status;
+    my $var_result    = $self->var_result;
+    my $var_status    = $self->var_status;
+    my $check_success = $self->check_success;
 
     try {
         my $response = $self->rest_request();
 
-        $self->add_detail( "Status: $response->{status}" );
-        $self->stash_set( $var_status => $response->{status} );
-
         $self->decode_content($response, $var_result);
+
+        if (!$response->is_success) {
+            $self->add_detail( "Status: " . $response->status_line );
+            if ($check_success) {
+                die "Request failed.\n";
+            }
+        }
+
+        $self->stash_set( $var_status => $response->code );
 
         return $self->result;
     }

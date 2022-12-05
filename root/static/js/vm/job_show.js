@@ -36,6 +36,12 @@
         else if (data.status === 'finished') {
             self.status_class('btn btn-xs btn-default btn-success reset-pointer');
         }
+        else if (data.status === 'aborting'
+              || data.status === 'aborted'
+              || data.status === 'abort_error'
+        ) {
+            self.status_class('btn btn-xs btn-default btn-danger reset-pointer');
+        }
     }
 
     epplication.JobShowViewModel = function(job_reload_time) {

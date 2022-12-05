@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 # create man dirs manually because otherwise psql won't install on debian-slim
 RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
@@ -6,20 +6,21 @@ RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
 RUN    apt-get update \
     && apt-get install -y --no-install-recommends \
        build-essential \
-       carton \
-       cpanminus \
        libdaemon-control-perl \
        libdir-self-perl \
        libmodule-install-perl \
        libssl-dev \
        libssh2-1-dev \
        libxml2-dev \
+       libexpat1-dev \
        zlib1g-dev \
-       postgresql-server-dev-11 \
-       postgresql-client-11 \
+       postgresql-server-dev-13 \
+       postgresql-client-13 \
        nginx \
        ssh \
-       libexpat1-dev \
+       carton \
+       cpanminus \
+       curl \
     && rm -rf /var/lib/apt/lists/*
 
 RUN cpanm Config::ZOMG && rm -rf ~/.cpanm
