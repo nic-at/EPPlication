@@ -7,7 +7,9 @@ use HTTP::Request;
 use Encode qw/ decode_utf8 /;
 
 has 'ua' => (
-    is       => 'ro',
+    is       => 'rw', # TODO: change back to 'ro' once LWP has a clear_credentials method
+                      #       also replace $lwp->clone code from SOAP digest auth and use
+                      #       clear_credentials instead.
     isa      => 'LWP::UserAgent',
     lazy     => 1,
     builder  => '_build_ua',

@@ -1,3 +1,7 @@
+1.0.11  18.09.2023
+    - fix selenium, pin container tag
+    - no strict host key checking for SSH requests
+
 1.0.10  30.11.2022
     - don't show dualvar values
     - show response status_line if request fails

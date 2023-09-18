@@ -211,6 +211,7 @@ xsi:schemaLocation="urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd">
         Host: <code>http://soap.nic-test.at</code><br/>
         Port: <code>9876</code><br/>
         Path: <code>/soap</code><br/>
+        Http_digest: <code>["soap.nic-test.at:80","MyRealm","MyUser","MyPassword"]</code><br/>
         Headers:<code>[] | ["Content-Type","application/soap+xml"]</code>
         Method:<code>GET|POST|PUT|DELETE</code><br/>
         var_result: <code>soap_response</code><br/>

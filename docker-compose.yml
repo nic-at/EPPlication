@@ -1,7 +1,7 @@
 version: '3.6'
 services:
     db:
-        image: postgres:11-alpine
+        image: postgres:15-alpine
         container_name: epplication-db
         environment:
             POSTGRES_USER: epplication
@@ -10,7 +10,7 @@ services:
         volumes:
             - db_data:/var/lib/postgresql/data
     selenium:
-        image: selenium/standalone-firefox-debug
+        image: selenium/standalone-firefox:114.0-geckodriver-0.33-grid-4.10.0-20230614
         container_name: epplication-selenium
         volumes:
             - /dev/shm:/dev/shm

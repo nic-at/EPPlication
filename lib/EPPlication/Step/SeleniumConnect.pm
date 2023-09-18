@@ -2,7 +2,7 @@ package EPPlication::Step::SeleniumConnect;
 
 use Moose;
 use EPPlication::Role::Step::Parameters;
-use Selenium::Remote::Driver;
+use Selenium::Firefox;
 use Selenium::Remote::WDKeys;
 
 with
@@ -27,7 +27,7 @@ sub process {
     die 'driver exists'
       if $self->selenium_client->driver_exists($conf{identifier});
 
-    my $driver = Selenium::Remote::Driver->new(
+    my $driver = Selenium::Firefox->new(
         remote_server_addr => $conf{host},
         port => $conf{port},
     );

@@ -32,7 +32,6 @@ Build docker image and run it
 ```
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --build-arg CONTAINER_UID=`id -u` app
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
 ```
 
 webinterface
@@ -48,14 +47,14 @@ Connect on port 5900 to see EPPlication controlling the browser.
 `xtightvncviewer localhost::5900` (password: `secret`)
 
 ## Run dev testsuite
-Setup test database and run testserver
+Setup test database and run testserver (./script/docker/init_testsuite.sh)
 ```
-docker exec epplication-db dropdb --username=epplication epplication_testing
+docker exec epplication-db dropdb --force --username=epplication epplication_testing
 docker exec epplication-db createdb --username=epplication --owner=epplication epplication_testing
 docker exec -u epplication epplication-app bash -c 'CATALYST_CONFIG_LOCAL_SUFFIX=testing CATALYST_DEBUG=1 carton exec plackup -Ilib epplication.psgi --port 3000'
 ```
 
-Run tests
+Run tests (./script/docker/run_testsuite.sh)
 ```
 docker exec -u epplication epplication-app bash -c "ssh-keyscan -H -t ecdsa epplication-app >> ~/.ssh/known_hosts"
 docker exec -u epplication epplication-app bash -c 'EPPLICATION_DO_INIT_DB=1 EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=epplication EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 EPPLICATION_TESTSELENIUM=1 EPPLICATION_TESTSELENIUM_HOST=epplication-selenium EPPLICATION_TESTSELENIUM_PORT=4444 carton exec prove -lvr t'

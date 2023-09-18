@@ -1,12 +1,12 @@
 package EPPlication::Client::Selenium;
 use Moose;
 use namespace::autoclean;
-use Selenium::Remote::Driver;
+use Selenium::Firefox;
 
 has 'drivers' => (
     traits    => ['Hash'],
     is        => 'rw',
-    isa       => 'HashRef[Selenium::Remote::Driver]',
+    isa       => 'HashRef[Selenium::Firefox]',
     default   => sub { {} },
     handles   => {
         driver_exists => 'exists',

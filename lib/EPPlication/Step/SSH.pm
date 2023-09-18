@@ -40,6 +40,7 @@ sub process {
               port     => $ssh_port,
               key_path => $self->ssh_private_key_path->stringify,
               timeout  => 10, # 10 seconds
+              master_opts => [ -o => 'StrictHostKeyChecking=no' ],
     );
 
     if ($ssh->error) {

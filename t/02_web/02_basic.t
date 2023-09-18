@@ -221,6 +221,7 @@ my @tests = (
                 var_result   => 'soap_response',
                 body         => '<xml>foo</xml>',
                 validate_xml => 1,
+                check_success => 1,
             }
         },
         {
@@ -590,6 +591,7 @@ my @tests = (
                                  }',
                 var_result   => 'soap_response2',
                 validate_xml => 1,
+                check_success => 1,
             },
             expected_err_msg => 'Invalid XML',
         },

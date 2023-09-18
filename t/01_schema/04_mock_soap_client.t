@@ -45,6 +45,11 @@ my $response = <<"HERE";
 </soap:Envelope>
 HERE
 
+my $digest_netloc = 'localhost:8080';
+my $digest_realm  = 'digest_realm';
+my $digest_user   = 'epplication';
+my $digest_pass   = '12345abcdef';
+
 my $request_utf8  = encode_utf8($request);
 my $response_utf8 = encode_utf8($response);
 
@@ -93,12 +98,15 @@ my @steps = (
     },
     {
         type       => 'SOAP',
-        name       => 'send SOAP frame',
+        name       => 'send SOAP frame with HTTP::Digest auth',
         parameters => {
             host         => '[% soap_host %]',
             port         => '[% soap_port %]',
             path         => '[% soap_path %]',
             method       => 'POST',
+            http_digest  => sprintf('["%s","%s","%s","%s"]',
+                                    $digest_netloc, $digest_realm,
+                                    $digest_user, $digest_pass),
             headers      => '[
                                "Content-Type", "application/xml; charset=utf-8",
                                "SOAPAction", "urn:Registry::App::SOAP#command"
@@ -106,6 +114,26 @@ my @steps = (
             var_result   => 'soap_response__',
             body         => $request,
             validate_xml => 1,
+            check_success => 1,
+        },
+    },
+    {
+        type       => 'SOAP',
+        name       => 'send SOAP frame',
+        parameters => {
+            host         => '[% soap_host %]',
+            port         => '[% soap_port %]',
+            path         => '[% soap_path %]',
+            method       => 'POST',
+            http_digest  => '',
+            headers      => '[
+                               "Content-Type", "application/xml; charset=utf-8",
+                               "SOAPAction", "urn:Registry::App::SOAP#command"
+                             ]',
+            var_result   => 'soap_response__',
+            body         => $request,
+            validate_xml => 1,
+            check_success => 1,
         },
     },
     {
@@ -133,14 +161,26 @@ for my $step_data (@steps) {
 }
 
 {
+    my $check_credentials = 1; # after the 1st request we set this to false
     no warnings 'redefine';
     local *LWP::UserAgent::request = sub {
                                         my ( $self, $request ) = @_;
+
+                                        my @credentials = $self->credentials($digest_netloc, $digest_realm);
+                                        SKIP: {
+                                            skip 'only check 1st request credentials', 1 if !$check_credentials;
+                                            is_deeply(
+                                                \@credentials,
+                                                [$digest_user, $digest_pass],
+                                                'http digest credentials set correctly');
+                                        }
+                                        $check_credentials = 0;
+
                                         is($request->content, $request_utf8, "request data encoded correctly");
                                         return HTTP::Response->new(
                                             200,
                                             '',
-                                            ['content-type' => 'application/xml; charset=utf-8'],
+                                            ['content-type' => 'application/soap+xml; charset=utf-8'],
                                             $response_utf8,
                                         );
                                     };

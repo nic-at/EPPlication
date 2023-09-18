@@ -6,15 +6,9 @@ sub transform {
 
     my $re = qr/
                  ^
-                 (SUCCESS|ATTR|FAILED|Msg|Details)
-                 :
-                 \ 
-                 ([-\w\ \[\]\(\)\{\}]+)
-                 (?:
-                     :
-                     \ 
-                     (.*)
-                 )?
+                 (SUCCESS|ATTR|FAILED|Msg|Details|Messages\ waiting|message\ id|Queue-Date|message\ desc|message\ type)
+                 :\ 
+                 (.*)
                  $
              /xms;
     my $array = [];
@@ -25,11 +19,18 @@ sub transform {
         $count++;
         $line =~ s/\R//gxms;
 
-        if ( my ($type, $val1, $val2) = $line =~ $re ) {
-            push $array->@*, [$count, $type, $val1, $val2 // ''];
+        if ( my ($type, $val) = $line =~ $re ) {
+            if ($type eq 'ATTR') {
+                if ( my ($val1, $val2) = $val =~ qr/(\w+): \ (.*)$/xms ) {
+                    push $array->@*, [$count, $type, $val1, $val2 // ''];
+                    next;
+                }
+            }
+
+            push $array->@*, [$count, $type, $val, ''];
         }
         else {
-            push $array->@*, [$count, 'NONE', $line];
+            push $array->@*, [$count, 'NONE', $line, ''];
         }
     }
 

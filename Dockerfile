@@ -1,7 +1,4 @@
-FROM debian:bullseye-slim
-
-# create man dirs manually because otherwise psql won't install on debian-slim
-RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
+FROM debian:bookworm-slim
 
 RUN    apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -14,8 +11,8 @@ RUN    apt-get update \
        libxml2-dev \
        libexpat1-dev \
        zlib1g-dev \
-       postgresql-server-dev-13 \
-       postgresql-client-13 \
+       postgresql-server-dev-15 \
+       postgresql-client-15 \
        nginx \
        ssh \
        carton \
