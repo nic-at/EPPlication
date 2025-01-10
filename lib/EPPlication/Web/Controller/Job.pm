@@ -43,14 +43,10 @@ sub search : Chained('base_with_id') PathPart('') CaptureArgs(0) {
 
     my $query_str = $c->req->query_params->{search};
     if ($query_str) {
-        my $parser = Parqus->new( keywords => [qw/
-                                              position name
-                                              node     details
-                                              limit    status
-                                              offset   type
-                                              comment
+        my $parser = Parqus->new( keywords => [qw/ position name  node
+                                                   details  limit status
+                                                   offset   type  comment
                                               /],
-                                  escape_sequences => { '_' => '\_', '%', '\%' },
                                 );
         my $data = $parser->process($query_str);
         $c->stash( error_msg => join( "\n", @{ $data->{errors} } ) )

@@ -7,7 +7,7 @@ use Encode qw/ encode_utf8 /;
 SKIP: {
     skip(
         'Make sure the SSH key in directory ssh_keys is allowed to connect '
-        . 'to localhost (e.g. ssh-copy-id -i ssh_keys/id_rsa foobar@localhost) and set '
+        . 'to localhost (e.g. ssh-copy-id -i ssh_keys/id_ed25519 foobar@localhost) and set '
         . 'EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=foobar to run SSH Steptests.',
         1
     )

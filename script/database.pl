@@ -10,6 +10,7 @@ use Getopt::Long;
 use Term::ReadKey;
 use Pg::CLI::psql;
 use Pg::CLI::pg_dump;
+use Pg::CLI::pg_restore;
 
 my $cmd;
 my $from_version;
@@ -24,6 +25,8 @@ my $create_default_branch;
 my $file;
 my $src_branch;
 my $dest_branch;
+my $query;
+my $commit = 0;
 GetOptions(
     'command|cmd=s'         => \$cmd,
     'from-version|from=i'   => \$from_version,
@@ -38,6 +41,8 @@ GetOptions(
     'file=s'                => \$file,
     'src-branch=s'          => \$src_branch,
     'dest-branch=s'         => \$dest_branch,
+    'query=s'               => \$query,
+    'commit'                => \$commit,
 );
 
 sub usage {
@@ -56,6 +61,7 @@ usage:
   database.pl --cmd restore-tests --file $file
   database.pl --cmd delete-jobs
   database.pl --cmd branch --src-branch $src_branch --dest-branch $dest_branch
+  database.pl --cmd dbexec --query $query [--commit]
 HERE
     exit(0);
 }
@@ -74,6 +80,7 @@ elsif ( $cmd eq 'delete-tests' )     { delete_tests() }
 elsif ( $cmd eq 'restore-tests' )    { restore_tests() }
 elsif ( $cmd eq 'delete-jobs' )      { delete_jobs() }
 elsif ( $cmd eq 'branch' )           { branch() }
+elsif ( $cmd eq 'dbexec' )           { dbexec() }
 else                                 { usage() }
 
 sub prepare {
@@ -241,27 +248,22 @@ sub dump_tests {
         port     => $port,
     );
 
-    open( my $fh, '>>', $file )
-      or die "Could not open file for writing. ($!)";
+    my $stderr;
+    my @tables = qw/tag branch test test_tag step/;
+    say "Dumping tables ... ";
+    $pg_dump->run(
+        database => $database,
+        options  => [
+            '--format=custom',
+            '--data-only',
+            '--table=(' . join('|', @tables) . ')',
+            '--column-inserts',
+        ],
+        stdout   => $file,
+        stderr   => \$stderr,
+    );
 
-    for my $rel (qw/ tag branch test test_tag step/) {
-        print "Dumping $rel ... ";
-        my $stderr;
-        $pg_dump->run(
-            database => $database,
-            options  => [
-                '--format=plain',
-                '--data-only',
-                "--table=$rel",
-                '--column-inserts',
-            ],
-            stdout   => $fh,
-            stderr   => \$stderr,
-        );
-
-        die "Error: $stderr" if ($stderr);
-        say 'OK';
-    }
+    die "Error: $stderr" if ($stderr);
     say "tests dumped successfully.";
 }
 
@@ -284,7 +286,7 @@ sub delete_tests {
       . 'DELETE FROM "test_tag";'
       . 'DELETE FROM "branch";'
       . 'COMMIT;';
-    say "Deleting tests ...";
+    say "Deleting steps, tags, tests, branches ...";
     $psql->run(
         database => $database,
         stdin    => \$sql,
@@ -336,7 +338,7 @@ sub restore_tests {
 
     my ($user, $password, $host, $database, $port) = _get_pg_cli_params;
 
-    my $psql = Pg::CLI::psql->new(
+    my $pg_restore = Pg::CLI::pg_restore->new(
         username => $user,
         password => $password,
         host     => $host,
@@ -345,14 +347,41 @@ sub restore_tests {
 
     my $stderr;
     say "Restoring tests ... ";
-    $psql->execute_file(
+    $pg_restore->run(
         database => $database,
         options  => [
             '--single-transaction',
         ],
         stderr   => \$stderr,
-        file     => $file,
+        stdin    => $file,
     );
     die "Error: $stderr" if $stderr;
     say "tests restored successfully.";
+}
+
+sub dbexec {
+    die "Error: SQL query not defined." unless defined $query;
+    my ($user, $password, $host, $database, $port) = _get_pg_cli_params;
+
+    my $psql = Pg::CLI::psql->new(
+        username => $user,
+        password => $password,
+        host     => $host,
+        port     => $port,
+    );
+
+    my $stderr;
+    my $sql = 'BEGIN;' . $query . ';';
+    $sql .= $commit ? 'COMMIT;' : 'ROLLBACK;';
+    say "Exec query ...";
+    my $stdout;
+    $psql->run(
+        database => $database,
+        stdin    => \$sql,
+        stderr   => \$stderr,
+        stdout   => \$stdout,
+    );
+    die "Error: $stderr" if $stderr;
+    say $stdout;
+    say "query executed successfully." . ($commit ? ' (with commit)' : ' (without commit)');
 }

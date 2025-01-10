@@ -1,3 +1,18 @@
+1.0.12  10.01.2025
+    - update bootstrap v3.4.0 -> v3.4.1
+    - update jquery-ui v1.12.1 -> v1.14.1
+    - update jquery v3.3.1 -> v3.7.1
+    - update knockout-sortable.js v0.15.0 -> v1.2.0
+    - update knockout.js v3.4.2 -> v3.5.1
+    - update perl module dependencies
+    - stricter SSH client options
+    - use pg_restore instead of psql to restore DB dumps
+    - improve container setup
+    - refactor search query escaping and add test
+    - add Template::Plugin::JSON dependency
+    - show job duration in HH:MM:SS format instead of seconds
+    - util: run SQL query via database.pl script
+
 1.0.11  18.09.2023
     - fix selenium, pin container tag
     - no strict host key checking for SSH requests

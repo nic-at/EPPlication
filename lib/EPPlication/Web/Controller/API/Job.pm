@@ -37,8 +37,7 @@ sub _prepare_job_data {
     my %data = $job->get_columns;
     $data{created} = $job->created->set_time_zone('Europe/Vienna')
       ->strftime('%d.%m.%Y %H:%M:%S');
-    $data{duration} =
-      defined $data{duration} ? sprintf( '%.2f', $data{duration} ) : '';
+    $data{duration} = defined $data{duration} ? $data{duration} : '';
     $data{num_steps} = defined $data{num_steps} ? $data{num_steps} : '';
     $data{errors}  = defined $data{errors} ? $data{errors} : '';
     $data{user}    = defined $job->user ? $job->user->name : '';

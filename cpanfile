@@ -18,6 +18,7 @@ requires 'HTML::FormHandler';
 requires 'HTML::FormHandler::Model::DBIC';
 requires 'Net::EPP';
 requires 'Template';
+requires 'Template::Plugin::JSON';
 requires 'XML::LibXML';
 requires 'XML::LibXML::Simple';
 requires 'List::Util' => 1.55;
@@ -52,7 +53,6 @@ requires 'Digest::MD5';
 requires 'Package::Variant';
 requires 'Path::Class' => 0.31;
 requires 'MooseX::Types::Path::Class';
-requires 'Time::HiRes';
 requires 'Child';
 requires 'Term::ReadKey';
 requires 'IO::Compress::Bzip2';
@@ -81,6 +81,7 @@ requires 'IO::File::WithPath';
 requires 'Plack::Middleware::Assets';
 requires 'Clone';
 requires 'Selenium::Remote::Driver';
+requires 'Parqus';
 
 on 'test' => sub {
     requires 'Test::More' => '0.88';

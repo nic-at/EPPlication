@@ -30,8 +30,8 @@ my $config = {
         job_export_dir => __DIR__ . '/root/job_exports',
     },
     deployment_handler_dir => __DIR__ . '/db_upgrades',
-    ssh_private_key_path   => __DIR__ . '/ssh_keys/id_rsa',
-    ssh_public_key_path    => __DIR__ . '/ssh_keys/id_rsa.pub',
+    ssh_private_key_path   => __DIR__ . '/ssh_keys/id_ed25519',
+    ssh_public_key_path    => __DIR__ . '/ssh_keys/id_ed25519.pub',
     log_file               => '/var/log/epplication/main.log',
     step_timeout           => 900, # seconds
     step_result_batch_size => 5000,

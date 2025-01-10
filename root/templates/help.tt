@@ -392,8 +392,8 @@ successfully</code><br>Variable:
       <td>
         Execute a command on a remote host<br/>
         For Public Key Authentication to work you need to save your
-public/private keys as <code>ssh_keys/id_rsa.pub</code> and
-<code>ssh_keys/id_rsa</code> and copy the public key into the proper
+public/private keys as <code>ssh_keys/id_id_ed25519.pub</code> and
+<code>ssh_keys/id_ed25519</code> and copy the public key into the proper
 <code>.ssh/authorized_keys</code> file on the remote host.<br/>
       </td>
       <td>

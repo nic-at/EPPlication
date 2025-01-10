@@ -13,10 +13,10 @@ sub _get_active_branch {
     if ( exists $c->session->{active_branch} ) {
         $branch = $c->model('DB::Branch')->find($c->session->{active_branch}{id});
         if (!$branch) {
+            my $branch_name = $c->session->{active_branch}{name};
+            my $branch_id   = $c->session->{active_branch}{id};
             delete $c->session->{active_branch};
-            die('Branch not found: '
-                .$c->session->{active_branch}{name}.':'
-                .$c->session->{active_branch}{id});
+            die("Branch not found: $branch_name:$branch_id");
         }
     }
 

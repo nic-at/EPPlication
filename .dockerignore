@@ -1,9 +1,11 @@
 Dockerfile
-docker-compose.yml
+compose.yml
+compose.override.yml
+compose.devel.yml
 .git
 .gitignore
 main.log
-ssh_keys
-root/job_exports
+ssh_keys/*
+root/job_exports/*
 epplication_web_*
 local

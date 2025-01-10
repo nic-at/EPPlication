@@ -72,6 +72,13 @@ sub _lc_search {
     return -and => [ \[ "LOWER($col) LIKE ?", $query ], ];
 }
 
+sub _prepare_query {
+    my ($query) = @_;
+    $query =~ s/%/\\%/g;
+    $query =~ s/_/\\_/g;
+    return lc($query);
+}
+
 # search for query in all Comment steps
 sub search_comment {
     my ( $self, $query ) = @_;
@@ -81,7 +88,7 @@ sub search_comment {
 
     return $self->search_rs(
         {   'steps.type'       => 'Comment',
-            _lc_search('steps.parameters', '%' . lc($query) . '%')
+            _lc_search('steps.parameters', '%' . _prepare_query($query) . '%')
         },
         { join => 'steps', }
     );
@@ -95,7 +102,7 @@ sub search_name {
     my $alias = $self->current_source_alias;
     return $self->search_rs(
         {
-            _lc_search("$alias.name", '%' . lc($query) . '%')
+            _lc_search("$alias.name", '%' . _prepare_query($query) . '%')
         },
     );
 }

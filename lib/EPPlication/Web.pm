@@ -3,7 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
-our $VERSION = '1.0.11';
+our $VERSION = '1.0.12';
 
 use Catalyst qw/
     ConfigLoader
@@ -102,7 +102,7 @@ David Schmidt <david.schmidt@univie.ac.at>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by the University of Vienna.
+This software is copyright (c) 2012-2025 by the University of Vienna.
 
 See LICENSE for the complete licensing terms.
 

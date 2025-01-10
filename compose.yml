@@ -21,12 +21,8 @@ services:
         image: davewood/epplication:latest
         depends_on:
             - db
-        volumes:
-            - app_data_job_exports:/home/epplication/EPPlication/root/job_exports
-            - app_data_ssh_keys:/home/epplication/EPPlication/ssh_keys
         ports:
             - "8080:80"
+
 volumes:
     db_data:
-    app_data_job_exports:
-    app_data_ssh_keys:

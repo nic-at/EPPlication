@@ -5,10 +5,10 @@ use feature qw/ say /;
 use base 'DBIx::Class';
 use IO::Compress::Bzip2 qw/bzip2 $Bzip2Error/;
 use Path::Class;
-use Time::HiRes qw/gettimeofday tv_interval/;
 use Try::Tiny;
 use Log::Any qw/$log/;
 use List::Util qw/ any /;
+use POSIX qw/strftime/;
 
 __PACKAGE__->load_components(qw/ InflateColumn::Serializer TimeStamp Core /);
 __PACKAGE__->table('job');
@@ -278,7 +278,7 @@ sub run {
 
     my $result_stats = {};
     my $position     = 1; # absolute position in entire job run
-    my $ts_start     = [gettimeofday];
+    my $ts_start     = time;
     my $timeout      = delete $env->{step_timeout};
     my $max_results  = delete $env->{step_result_batch_size};
     my $step_factory = delete $env->{step_factory};
@@ -336,7 +336,7 @@ sub _process_results {
     }
     $self->step_results_rs->populate( $results );
     $result_stats->{num_steps} += scalar @$results;
-    $result_stats->{duration} = tv_interval($ts_start);
+    $result_stats->{duration} = strftime("%T", gmtime(time - $ts_start));
     @$results = ();
     $self->update(
         {

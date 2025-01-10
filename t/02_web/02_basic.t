@@ -123,6 +123,21 @@ my @tests = (
     }
 }
 
+# postgres search pattern in a search query searches for the literal string '%' or '_'
+{
+    $mech->get_ok('/api/test?branch_id=1&search=name:"SomeTest"&tags=all');
+    my $json = decode_json($mech->content);
+    is( scalar $json->@*, 1, 'search "SomeTest" returns 1 result.');
+
+    $mech->get_ok('/api/test?branch_id=1&search=name:"Some%Test"&tags=all');
+    $json = decode_json($mech->content);
+    is_deeply($json, [], 'search for postgres wildcard returns empty result');
+
+    $mech->get_ok('/api/test?branch_id=1&search=name:"SomeTe_t"&tags=all');
+    $json = decode_json($mech->content);
+    is_deeply($json, [], 'search for postgres wildcard returns empty result');
+}
+
 # add steps
 {
     my $test    = $tests[0];

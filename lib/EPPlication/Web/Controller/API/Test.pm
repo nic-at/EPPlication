@@ -13,10 +13,7 @@ sub _apply_search_query {
     my $query_str = $c->req->query_params->{search};
     return $test_rs unless defined $query_str;
     return $test_rs unless length($query_str) > 0;
-    my $parser = Parqus->new(
-        keywords => [qw/ comment name /],
-        escape_sequences => { '_' => '\_', '%', '\%' },
-    );
+    my $parser = Parqus->new( keywords => [qw/ comment name /] );
     my $res = $parser->process($query_str);
     $c->detach( $c->controller('API::Root')->action_for('error'), [join( "\n", @{ $res->{errors} } )] )
       if exists $res->{errors};

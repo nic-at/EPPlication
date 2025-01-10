@@ -1,0 +1,8 @@
+version: '3.6'
+services:
+    app:
+        volumes:
+            - app_data:/home/epplication/EPPlication
+
+volumes:
+    app_data:

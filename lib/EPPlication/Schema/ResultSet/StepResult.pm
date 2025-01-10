@@ -21,6 +21,13 @@ sub _lc_search {
     return -and => [ \[ "LOWER($col) LIKE ?", $query ], ];
 }
 
+sub _prepare_query {
+    my ($query) = @_;
+    $query =~ s/%/\%/g;
+    $query =~ s/_/\_/g;
+    return lc($query);
+}
+
 sub search_name {
     my ( $self, $query ) = @_;
 
@@ -30,7 +37,7 @@ sub search_name {
     my $alias = $self->current_source_alias;
     return $self->search_rs(
         {
-            _lc_search("$alias.name", '%' . lc($query) . '%')
+            _lc_search("$alias.name", '%' . _prepare_query($query) . '%')
         },
     );
 }
@@ -43,7 +50,7 @@ sub search_details {
     my $alias = $self->current_source_alias;
     return $self->search_rs(
         {
-            _lc_search("$alias.details", '%' . lc($query) . '%')
+            _lc_search("$alias.details", '%' . _prepare_query($query) . '%')
         },
     );
 }
@@ -68,7 +75,7 @@ sub search_type {
     my $alias = $self->current_source_alias;
     return $self->search_rs(
         {
-            _lc_search("$alias.type", lc($query))
+            _lc_search("$alias.type", _prepare_query($query))
         },
     );
 }

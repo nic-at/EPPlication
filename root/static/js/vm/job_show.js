@@ -7,7 +7,7 @@
         self.status(data.status);
 
         if (data.summary.duration) {
-            self.duration(Number(data.summary.duration).toFixed(2) + ' seconds');
+            self.duration(data.summary.duration);
         }
 
         if (data.summary.num_steps) {

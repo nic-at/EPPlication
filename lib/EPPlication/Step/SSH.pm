@@ -40,7 +40,15 @@ sub process {
               port     => $ssh_port,
               key_path => $self->ssh_private_key_path->stringify,
               timeout  => 10, # 10 seconds
-              master_opts => [ -o => 'StrictHostKeyChecking=no' ],
+              master_opts => [
+                  -o => 'StrictHostKeyChecking no',
+                  -o => 'PasswordAuthentication no',
+                  -o => 'IdentitiesOnly yes',
+                  -o => 'IdentityFile ' . $self->ssh_private_key_path->stringify,
+                  -F => '/dev/null',
+              ],
+              forward_agent => 0,
+              forward_X11 => 0,
     );
 
     if ($ssh->error) {

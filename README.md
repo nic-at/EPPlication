@@ -25,13 +25,20 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
 
 
 ## Installation
-Pull docker image from hub.docker.com and run it  
-`docker-compose up`
 
-Build docker image and run it  
+### Use container image from hub.docker.com
 ```
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --build-arg CONTAINER_UID=`id -u` app
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+./script/container/start.sh
+```
+
+### Development mode
+```
+./script/container/build.sh
+```
+
+the host directory is mounted inside the container
+```
+./script/container/start.sh --dev
 ```
 
 webinterface
@@ -42,23 +49,20 @@ webinterface
 ## Selenium
 The selenium server can be accessed using `epplication-selenium` as host when creating a SeleniumConnect step.
 
-a VNC server is running on the selenium docker container.
+a VNC server is running in the selenium container.  
 Connect on port 5900 to see EPPlication controlling the browser.  
 `xtightvncviewer localhost::5900` (password: `secret`)
 
 ## Run dev testsuite
-Setup test database and run testserver (./script/docker/init_testsuite.sh)
+Setup test database and run testserver
 ```
-docker exec epplication-db dropdb --force --username=epplication epplication_testing
-docker exec epplication-db createdb --username=epplication --owner=epplication epplication_testing
-docker exec -u epplication epplication-app bash -c 'CATALYST_CONFIG_LOCAL_SUFFIX=testing CATALYST_DEBUG=1 carton exec plackup -Ilib epplication.psgi --port 3000'
+./script/container/init_testsuite.sh
 ```
 
-Run tests (./script/docker/run_testsuite.sh)
+Run tests
 ```
-docker exec -u epplication epplication-app bash -c "ssh-keyscan -H -t ecdsa epplication-app >> ~/.ssh/known_hosts"
-docker exec -u epplication epplication-app bash -c 'EPPLICATION_DO_INIT_DB=1 EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=epplication EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 EPPLICATION_TESTSELENIUM=1 EPPLICATION_TESTSELENIUM_HOST=epplication-selenium EPPLICATION_TESTSELENIUM_PORT=4444 carton exec prove -lvr t'
+./script/container/run_testsuite.sh
 ```
 
 ## Copyright & License
-Copyright (c) 2012-2018, [David Schmidt](mailto:david.schmidt@univie.ac.at), [Free Artistic 2.0](https://opensource.org/licenses/Artistic-2.0).
+Copyright (c) 2012-2025, [David Schmidt](mailto:david.schmidt@univie.ac.at), [Free Artistic 2.0](https://opensource.org/licenses/Artistic-2.0).

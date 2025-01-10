@@ -59,6 +59,16 @@ body {
 #steps tr > *:nth-child(6) {
     word-break: break-all;
 }
+#jobs tr > *:nth-child(2),
+#jobs tr > *:nth-child(3),
+#jobs tr > *:nth-child(4),
+#jobs tr > *:nth-child(5),
+#jobs tr > *:nth-child(6),
+#jobs tr > *:nth-child(7),
+#jobs tr > *:nth-child(8),
+#jobs tr > *:nth-child(10) {
+    text-align: end;
+}
 #steps {
     min-height: 25px;
 }
