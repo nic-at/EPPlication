@@ -21,9 +21,6 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
    - diff - data comparison utility
    - query data structures to extract information
 
-[![EPPlication Video](https://i.vimeocdn.com/video/714314727.jpg?mw=1000&mh=560)](https://vimeo.com/280733237)
-
-
 ## Installation
 
 ### Use container image from hub.docker.com

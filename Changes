@@ -1,3 +1,7 @@
+1.0.13  13.01.2025
+    - fix: Net::EPP::Client now has its own connected method
+    - rm vimeo link from README
+
 1.0.12  10.01.2025
     - update bootstrap v3.4.0 -> v3.4.1
     - update jquery-ui v1.12.1 -> v1.14.1

@@ -119,7 +119,7 @@ sub connect {
 sub connected {
     my ($self) = @_;
     return unless $self->has_client;
-    return $self->client->{connection}->connected;
+    return $self->client->connected;
 }
 
 __PACKAGE__->meta->make_immutable;
